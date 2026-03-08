@@ -2723,6 +2723,13 @@ async function processJsonText(text, filename) {
   return loaded;
 }
 
+const _MONTHS_FECHA = {Ene:0,Feb:1,Mar:2,Abr:3,May:4,Jun:5,Jul:6,Ago:7,Sep:8,Oct:9,Nov:10,Dic:11};
+function parseFecha(f) {
+  if (!f) return 0;
+  const [d, m, y] = (f || '').split(' ');
+  return new Date(+y, _MONTHS_FECHA[m] ?? 0, +d).getTime();
+}
+
 async function handleFiles(files) {
   let loaded = 0, skipped = 0;
   showImportStatus('⏳ Procesando…', 'warn');
@@ -2756,13 +2763,7 @@ async function handleFiles(files) {
     }
   }
 
-  // Sort by date descending (newest first) — fecha format: "D Mes YYYY"
-  const MONTHS = {Ene:0,Feb:1,Mar:2,Abr:3,May:4,Jun:5,Jul:6,Ago:7,Sep:8,Oct:9,Nov:10,Dic:11};
-  function parseFecha(f) {
-    if (!f) return 0;
-    const [d, m, y] = f.split(' ');
-    return new Date(+y, MONTHS[m] ?? 0, +d).getTime();
-  }
+  // Sort by date descending (newest first)
   importedVotaciones.sort((a, b) => parseFecha(b.fecha) - parseFecha(a.fecha));
   importedVotaciones = groupRepeatedVotes(importedVotaciones);
   buildDiputadoIndex();
