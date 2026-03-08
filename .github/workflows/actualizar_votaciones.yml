@@ -11,6 +11,9 @@ on:
         required: false
         default: 'X XI XII XIII XIV XV'
 
+permissions:
+  contents: write
+
 jobs:
   actualizar:
     runs-on: ubuntu-latest
