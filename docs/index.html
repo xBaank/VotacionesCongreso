@@ -3050,7 +3050,7 @@ async function loadFromRepo() {
   // Fetch datos/index.json to discover which legislature files exist
   let legFiles;
   try {
-    const res = await fetch('./datos/index.json');
+    const res = await fetch('./index.json');
     if (!res.ok) throw new Error(`${res.status}`);
     legFiles = await res.json(); // ['XV', 'XIV', ...]
   } catch (e) {
@@ -3067,7 +3067,7 @@ async function loadFromRepo() {
   // Load legislatures in parallel
   await Promise.all(legFiles.map(async (leg) => {
     try {
-      const r = await fetch(`./datos/${leg}.json`);
+      const r = await fetch(`./${leg}.json`);
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const votaciones = await r.json(); // pre-processed array
       for (const v of votaciones) {

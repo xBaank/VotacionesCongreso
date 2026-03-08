@@ -16,7 +16,7 @@ from datetime import date
 from pathlib import Path
 
 VOTACIONES_DIR = Path("votaciones")
-DATOS_DIR      = Path("datos")
+DATOS_DIR      = Path("docs")
 
 # ── Misma tabla GRUPO_META que el HTML ────────────────────
 GRUPO_META = {
