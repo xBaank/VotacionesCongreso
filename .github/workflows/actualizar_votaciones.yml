@@ -9,7 +9,7 @@ on:
       legislaturas:
         description: 'Legislaturas a descargar (ej: XV  o  XIV XV). Vacío = solo XV'
         required: false
-        default: 'X XI XII XIII XIV XV'
+        default: 'XV'
 
 permissions:
   contents: write
