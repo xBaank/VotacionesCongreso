@@ -1,0 +1,3130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Congreso de los Diputados</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+:root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #2a3441;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --gold: #d4a843;
+    --gold-dim: #8a6c2a;
+    --red-es: #c0392b;
+    --accent: #58a6ff;
+
+    /* Party colors */
+    --pp: #1e77c2;
+    --psoe: #e4002b;
+    --vox: #6abf4b;
+    --sumar: #9b2d9e;
+    --erc: #f5b222;
+    --junts: #17a58d;
+    --bildu: #95c11f;
+    --pnv: #3b7d4e;
+    --cc: #ff8c00;
+    --otros: #607080;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Libre Baskerville', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 64px;
+  }
+
+  .escudo {
+    font-size: 1.6rem;
+    filter: sepia(1) hue-rotate(30deg) saturate(2);
+    flex-shrink: 0;
+  }
+
+  .header-title {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .header-title h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-title p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .legislatura-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    background: var(--gold-dim);
+    color: var(--gold);
+    padding: 0.25rem 0.6rem;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    border: 1px solid var(--gold-dim);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    flex-shrink: 0;
+  }
+
+  .nav-tab {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.2rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    height: 64px;
+    white-space: nowrap;
+  }
+
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active {
+    color: var(--gold);
+    border-bottom: 2px solid var(--gold);
+  }
+
+  @media (max-width: 600px) {
+    header {
+      flex-wrap: wrap;
+      height: auto;
+      padding: 0.6rem 1rem 0;
+      gap: 0.5rem;
+    }
+
+    .escudo { font-size: 1.4rem; }
+    .header-title h1 { font-size: 0.9rem; }
+    .header-title p { display: none; }
+    .legislatura-badge { display: none; }
+
+    .nav-tabs {
+      width: 100%;
+      border-top: 1px solid var(--border);
+      margin-top: 0.2rem;
+    }
+
+    .nav-tab {
+      flex: 1;
+      height: 38px;
+      font-size: 0.68rem;
+      padding: 0.4rem 0.5rem;
+      text-align: center;
+    }
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* ── DASHBOARD ── */
+  #estadisticas > *, #diputados > * { max-width: 1200px; margin-left: auto; margin-right: auto; }
+  .dash-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .dash-kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.2rem 1rem;
+    text-align: center;
+  }
+  .dash-kpi-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .dash-kpi-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.4rem;
+  }
+  .dash-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .dash-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.2rem 1.2rem 1rem;
+  }
+  .dash-card-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 0.25rem;
+  }
+  .dash-card-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--muted);
+    margin-bottom: 0.9rem;
+  }
+  /* Bar chart rows */
+  .dbar-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 38px;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.55rem;
+  }
+  .dbar-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.3;
+  }
+  .dbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    height: 10px;
+    overflow: hidden;
+    display: flex;
+  }
+  .dbar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .dbar-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-align: right;
+  }
+  /* Alignment matrix */
+  .align-matrix {
+    overflow-x: auto;
+  }
+  .align-table {
+    border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    width: 100%;
+  }
+  .align-table th {
+    color: var(--muted);
+    padding: 3px 5px;
+    text-align: center;
+    font-weight: 500;
+  }
+  .align-table td {
+    padding: 3px 5px;
+    text-align: center;
+    border-radius: 2px;
+    font-size: 0.58rem;
+  }
+  .align-row-label {
+    text-align: left !important;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  /* Monthly chart */
+  .month-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 80px;
+    overflow-x: auto;
+    padding-bottom: 18px;
+    position: relative;
+  }
+  .month-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 28px;
+  }
+  .month-bar {
+    width: 20px;
+    border-radius: 2px 2px 0 0;
+    transition: height 0.4s ease;
+    cursor: default;
+    position: relative;
+  }
+  .month-bar:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: #eee;
+    font-size: 0.55rem;
+    padding: 2px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .month-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.48rem;
+    color: var(--muted);
+    margin-top: 3px;
+    text-align: center;
+  }
+  @media (max-width: 700px) {
+    .dash-kpi-row { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+    .dash-two-col { grid-template-columns: 1fr; gap: 1rem; }
+    .dash-card { padding: 0.9rem 0.75rem; }
+    .dbar-row { grid-template-columns: 1fr 38px; }
+    .dbar-label { grid-column: 1 / -1; margin-bottom: -0.3rem; }
+    .dbar-track { grid-column: 1; }
+    .align-table { font-size: 0.5rem; }
+    .align-table th, .align-table td { padding: 2px 3px; }
+    .dash-kpi-value { font-size: 1.5rem; }
+  }
+
+  /* ── LEGISLATURE SELECTOR ── */
+  .leg-selector-bar {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--gold-dim);
+    border-radius: 4px;
+    padding: 0.55rem 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .leg-selector-bar.visible { display: flex; }
+  .leg-selector-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .leg-chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .leg-chip:hover { border-color: var(--gold); color: var(--text); }
+  .leg-chip.active { border-color: var(--gold); color: var(--gold); background: rgba(192,155,90,0.1); }
+  .leg-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* ── DIPUTADOS SECTION ── */
+  .dip-section-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+    min-height: 70vh;
+  }
+  .dip-section-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .dip-section-search {
+    padding: 0.7rem 1rem;
+    background: var(--surface);
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .dip-section-search::placeholder { color: var(--muted); }
+  .dip-section-filters {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .dip-party-chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    padding: 0.3rem 0.6rem;
+    border: none;
+    border-right: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .dip-party-chip:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+  .dip-party-chip.active { color: #fff; }
+  .dip-section-list {
+    overflow-y: auto;
+    flex: 1;
+  }
+  .dip-list-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .dip-list-row:hover { background: rgba(255,255,255,0.04); }
+  .dip-list-row.active { background: rgba(192,155,90,0.1); border-left: 2px solid var(--gold); }
+  .dip-list-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dip-list-nombre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .dip-list-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--muted);
+  }
+  .dip-section-profile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: sticky;
+    top: 80px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+  }
+  @media (max-width: 700px) {
+    .dip-section-layout {
+      grid-template-columns: 1fr;
+    }
+    .dip-section-profile {
+      position: static;
+      max-height: 500px;
+    }
+  }
+
+  /* ── DIPUTADO MODAL ── */
+  .dip-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .dip-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .dip-nombre {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .dip-partido {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .dip-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .dip-close:hover { color: var(--text); }
+  .dip-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+  .dip-stat {
+    padding: 1rem 0.75rem;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .dip-stat:last-child { border-right: none; }
+  .dip-stat-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .dip-stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.56rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-top: 0.3rem;
+  }
+  .dip-vots-list {
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+  }
+  .dip-vot-row {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+  }
+  .dip-vot-row:last-child { border-bottom: none; }
+  .dip-vot-icon { font-size: 0.9rem; text-align: center; }
+  .dip-vot-titulo { color: var(--text); line-height: 1.3; }
+  .dip-vot-fecha { color: var(--muted); white-space: nowrap; font-size: 0.58rem; }
+  .dip-search {
+    width: 100%;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.75rem 1.5rem;
+    outline: none;
+  }
+  .dip-search::placeholder { color: var(--muted); }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── HEMICICLO ── */
+  .hemiciclo-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .hemiciclo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+
+  .card-subtitle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  #hemiciclo-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .seat circle {
+    transition: r 0.15s, opacity 0.15s;
+    cursor: pointer;
+  }
+
+  .seat circle:hover { r: 5.5; opacity: 1 !important; }
+
+  /* ── LEYENDA / PARTIDO CARDS ── */
+  .partidos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .partido-row {
+    display: grid;
+    grid-template-columns: 10px 1fr auto auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .partido-row::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .partido-row:hover { border-color: var(--gold-dim); background: #1e2a38; }
+  .partido-row.highlighted { border-color: var(--gold); background: #1e2a38; }
+
+  .partido-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .partido-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .partido-full-name {
+    font-size: 0.6rem;
+    color: var(--muted);
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .partido-escanos {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .partido-pct {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  .mayoria-bar {
+    margin: 1rem 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.8rem;
+  }
+
+  .mayoria-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.75rem;
+  }
+
+  .bar-track {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    position: relative;
+    overflow: visible;
+    display: flex;
+    margin-bottom: 0.5rem;
+  }
+
+  .bar-segment {
+    height: 100%;
+    position: relative;
+    transition: opacity 0.2s;
+    cursor: pointer;
+  }
+
+  .bar-segment:first-child { border-radius: 5px 0 0 5px; }
+  .bar-segment:last-child  { border-radius: 0 5px 5px 0; }
+  .bar-segment:only-child  { border-radius: 5px; }
+  .bar-segment:hover { opacity: 0.8; }
+
+  .bar-midline {
+    position: absolute;
+    top: -5px; bottom: -5px;
+    width: 2px;
+    background: var(--gold);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+
+  .bar-midline::after {
+    content: '176';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  /* ── VOTACIONES ── */
+  .votaciones-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .votacion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .votacion-item {
+    padding: 0.9rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .votacion-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .votacion-item:hover { border-color: var(--gold-dim); }
+
+  .votacion-item.active {
+    border-color: var(--gold);
+    background: var(--surface2);
+  }
+
+  .votacion-item.active::after { opacity: 1; background: var(--gold); }
+
+  .votacion-fecha {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+  }
+
+  .votacion-titulo {
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+
+  .votacion-resultado {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .resultado-aprobado { background: #1a3a1a; color: #4ade80; border: 1px solid #2d5a2d; }
+  .resultado-rechazado { background: #3a1a1a; color: #f87171; border: 1px solid #5a2d2d; }
+
+  /* ── PANEL VOTACIÓN DETALLE ── */
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+  .filter-search {
+    flex: 1;
+    min-width: 160px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.35rem 0.6rem;
+    outline: none;
+  }
+  .filter-search:focus { border-color: var(--gold); }
+  .filter-search::placeholder { color: var(--muted); }
+  .filter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.35rem 0.5rem;
+    cursor: pointer;
+    outline: none;
+    max-width: 160px;
+  }
+  .filter-select:focus { border-color: var(--gold); }
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.3rem 0.55rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .filter-chip:hover { border-color: var(--gold); color: var(--text); }
+  .filter-chip.active { border-color: var(--gold); color: var(--gold); background: rgba(192,155,90,0.08); }
+  .filter-clear {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem 0.4rem;
+    opacity: 0.7;
+  }
+  .filter-clear:hover { color: var(--text); opacity: 1; }
+  .filter-results {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    padding: 0.3rem 0;
+  }
+
+  .votacion-detail {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    position: sticky;
+    top: 80px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+  }
+
+  .vd-header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+
+  .vd-fecha {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .vd-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin: 0.4rem 0;
+    line-height: 1.3;
+  }
+
+  .vd-descripcion {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .vd-totales {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .total-box {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  .total-box.a-favor { background: #0d1f0d; border-color: #2d5a2d; }
+  .total-box.en-contra { background: #1f0d0d; border-color: #5a2d2d; }
+  .total-box.abstenciones { background: #1a1a1a; border-color: #3a3a3a; }
+
+  .total-numero {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    display: block;
+  }
+
+  .total-box.a-favor .total-numero { color: #4ade80; }
+  .total-box.en-contra .total-numero { color: #f87171; }
+  .total-box.abstenciones .total-numero { color: #94a3b8; }
+
+  .total-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    display: block;
+    margin-top: 0.2rem;
+  }
+
+  /* Hemiciclo votación */
+  .votacion-hemiciclo-wrap {
+    margin: 1.5rem 0;
+  }
+
+  .votacion-hemiciclo-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  /* Desglose por partido */
+  .partido-desglose {
+    margin-top: 1.5rem;
+  }
+
+  .desglose-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .desglose-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .desglose-row {
+    display: grid;
+    grid-template-columns: 8px 90px 1fr 28px 28px 28px;
+    gap: 0.6rem;
+    align-items: center;
+    padding: 0.5rem 0.6rem;
+    background: var(--surface2);
+    border-radius: 2px;
+    border: 1px solid var(--border);
+  }
+
+  .desglose-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .desglose-nombre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text);
+  }
+
+  .desglose-bar-wrap {
+    display: flex;
+    gap: 2px;
+    height: 8px;
+    align-items: center;
+  }
+
+  .dseg { height: 8px; border-radius: 1px; transition: width 0.4s; }
+  .dseg-af { background: #4ade80; }
+  .dseg-ec { background: #f87171; }
+  .dseg-ab { background: #64748b; }
+  .dseg-gap { flex: 1; }
+
+  .desglose-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    text-align: center;
+  }
+
+  .af-num { color: #4ade80; }
+  .ec-num { color: #f87171; }
+  .ab-num { color: #64748b; }
+
+  .voto-leyenda {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.6rem;
+  }
+
+  .vl-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+  }
+
+  .vl-dot { width: 8px; height: 8px; border-radius: 1px; }
+
+  /* ── TOOLTIP ── */
+  #tooltip {
+    position: fixed;
+    background: var(--surface2);
+    border: 1px solid var(--gold-dim);
+    padding: 0.5rem 0.8rem;
+    border-radius: 3px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 999;
+    max-width: 200px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 4rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    margin: 2rem 0;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section.active { animation: fadeUp 0.3s ease; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    main { padding: 1rem; }
+    .hemiciclo-wrapper { grid-template-columns: 1fr; }
+    .votaciones-layout { grid-template-columns: 1fr; }
+    .nav-tab { padding: 0.5rem 0.7rem; font-size: 0.65rem; }
+  }
+
+  @media (max-width: 600px) {
+    main { padding: 0.75rem; }
+
+    /* Detail panel */
+    /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+  .filter-search {
+    flex: 1;
+    min-width: 160px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.35rem 0.6rem;
+    outline: none;
+  }
+  .filter-search:focus { border-color: var(--gold); }
+  .filter-search::placeholder { color: var(--muted); }
+  .filter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.35rem 0.5rem;
+    cursor: pointer;
+    outline: none;
+    max-width: 160px;
+  }
+  .filter-select:focus { border-color: var(--gold); }
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.3rem 0.55rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .filter-chip:hover { border-color: var(--gold); color: var(--text); }
+  .filter-chip.active { border-color: var(--gold); color: var(--gold); background: rgba(192,155,90,0.08); }
+  .filter-clear {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem 0.4rem;
+    opacity: 0.7;
+  }
+  .filter-clear:hover { color: var(--text); opacity: 1; }
+  .filter-results {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    padding: 0.3rem 0;
+  }
+
+  .votacion-detail { padding: 1rem; }
+
+    /* Totales: shrink numbers and padding */
+    .vd-totales { gap: 0.5rem; margin: 1rem 0; }
+    .total-box { padding: 0.6rem 0.4rem; }
+    .total-numero { font-size: 1.5rem; }
+    .total-label { font-size: 0.55rem; letter-spacing: 0.04em; }
+
+    /* Desglose rows: hide bar, shrink name col */
+    .desglose-row {
+      grid-template-columns: 8px 1fr 22px 22px 22px;
+      gap: 0.4rem;
+      padding: 0.4rem 0.5rem;
+    }
+    .desglose-bar-wrap { display: none; }
+    .desglose-nombre { font-size: 0.65rem; }
+    .desglose-num { font-size: 0.62rem; }
+
+    /* Leyenda votes: wrap */
+    .voto-leyenda { flex-wrap: wrap; gap: 0.6rem; }
+
+    /* Descripcion smaller */
+    .vd-descripcion { font-size: 0.75rem; }
+    .vd-titulo { font-size: 1rem; }
+
+    /* Votacion list items */
+    .votacion-titulo { font-size: 0.78rem; }
+  }
+  /* ── IMPORT BAR ── */
+  .import-bar {
+    position: relative;
+    background: var(--surface);
+    border: 1px dashed var(--gold-dim);
+    border-radius: 4px;
+    padding: 0.9rem 1.2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .import-bar.drag-over {
+    border-color: var(--gold);
+    background: #1a2230;
+  }
+
+  .import-drop-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(212,168,67,0.12);
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+  }
+
+  .import-bar.drag-over .import-drop-overlay { display: flex; }
+
+  .import-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .import-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+  .import-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .import-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+    line-height: 1.5;
+  }
+
+  .import-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    background: var(--gold-dim);
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 0.06em;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .import-btn:hover { background: #a0802a; border-color: var(--gold); color: #fff; }
+
+  #import-status {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    min-height: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .import-ok   { color: #4ade80; }
+  .import-warn { color: #fbbf24; }
+  .import-err  { color: #f87171; }
+
+  .vot-rondas-badge {
+    display: inline-block;
+    background: #b06010;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 5px;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+  }
+  .vot-source-imported {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    background: #1a3a2a;
+    color: #4ade80;
+    border: 1px solid #2d5a3d;
+    border-radius: 2px;
+    padding: 0.1rem 0.4rem;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 600px) {
+    .import-bar { padding: 0.75rem; gap: 0.75rem; }
+    .import-sub { display: none; }
+  }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="escudo">🏛️</div>
+  <div class="header-title">
+    <h1>Congreso de los Diputados</h1>
+    <p>Reino de España · Cámara Baja</p>
+  </div>
+  <div class="legislatura-badge">XV LEGISLATURA · v2</div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('hemiciclo', this)">Hemiciclo</button>
+    <button class="nav-tab" onclick="showSection('votaciones', this)">Votaciones</button>
+    <button class="nav-tab" onclick="showSection('estadisticas', this); renderDashboard()">Estadísticas</button>
+    <button class="nav-tab" onclick="showSection('diputados', this); renderDiputadosSection()">Diputados</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ═══════════ HEMICICLO ═══════════ -->
+  <section id="hemiciclo" class="section active">
+
+    <!-- Import bar — lives here as the app's main entry point -->
+    <div class="import-bar" id="import-bar">
+      <div class="import-info">
+        <span class="import-icon">📂</span>
+        <div>
+          <div class="import-title">Importar votaciones oficiales</div>
+          <div class="import-sub">Descarga los ZIPs de <a href="https://www.congreso.es/es/opendata/votaciones" target="_blank" style="color:var(--gold)">congreso.es/opendata/votaciones</a> y arrástralos aquí o selecciónalos</div>
+        </div>
+      </div>
+      <label class="import-btn">
+        Importar ZIPs
+        <input type="file" id="json-file-input" accept=".zip,.json" multiple style="display:none">
+      </label>
+      <button class="import-btn" id="load-repo-btn" onclick="loadFromRepo()"
+        style="display:none;background:#1e3a52;border-color:#4a9eca;">
+        ⬇ Cargar del repositorio
+      </button>
+      <div class="import-drop-overlay" id="import-drop-overlay">Suelta los ZIPs aquí</div>
+    </div>
+    <div id="import-status"></div>
+
+    <!-- Legislature selector (shown when multiple legislatures loaded) -->
+    <div class="leg-selector-bar" id="leg-selector-bar">
+      <span class="leg-selector-label">Legislatura</span>
+      <div id="leg-chips"></div>
+      <span class="leg-count" id="leg-count"></span>
+    </div>
+
+    <div id="hemiciclo-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;text-align:center;gap:0.75rem;">
+      <span style="font-size:2.5rem;opacity:0.3">🏛</span>
+      Importa ZIPs de votaciones para ver<br>la composición real del hemiciclo
+    </div>
+    <div id="hemiciclo-content" style="display:none">
+      <div class="hemiciclo-wrapper">
+        <div class="hemiciclo-card">
+          <div class="card-title">Distribución de Escaños</div>
+          <div class="card-subtitle" id="hemiciclo-subtitle"></div>
+          <svg id="hemiciclo-svg" viewBox="0 0 600 300"></svg>
+          <div class="voto-leyenda" style="justify-content:center; margin-top:1rem;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);">↑ Izquierda · Derecha ↑</span>
+          </div>
+        </div>
+        <div>
+          <div class="mayoria-bar" id="mayoria-bar"></div>
+          <div class="partidos-list" id="partidos-list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ VOTACIONES ═══════════ -->
+  <section id="votaciones" class="section">
+
+    <div class="votaciones-layout">
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+          <div class="card-title">Proyectos y proposiciones</div>
+          <span id="vot-count" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);"></span>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filter-bar" id="filter-bar">
+          <input class="filter-search" id="filter-search" type="text" placeholder="🔍  Buscar por título…" oninput="applyFilters()">
+          <select class="filter-select" id="filter-tipo" onchange="applyFilters()">
+            <option value="">Todos los tipos</option>
+          </select>
+          <button class="filter-chip" id="chip-aprobada" onclick="toggleChip('aprobada')">✓ Aprobadas</button>
+          <button class="filter-chip" id="chip-rechazada" onclick="toggleChip('rechazada')">✗ Rechazadas</button>
+          <select class="filter-select" id="filter-partido" onchange="applyFilters()">
+            <option value="">Partido — todos</option>
+          </select>
+          <select class="filter-select" id="filter-voto-partido" onchange="applyFilters()" style="display:none">
+            <option value="">Cualquier voto</option>
+            <option value="af">Votó ✓ a favor</option>
+            <option value="ec">Votó ✗ en contra</option>
+            <option value="ab">Se abstuvo</option>
+          </select>
+          <button class="filter-clear" id="filter-clear-btn" onclick="clearFilters()" style="display:none">✕ Limpiar</button>
+        </div>
+        <div class="filter-results" id="filter-results"></div>
+
+        <div class="votacion-list" id="votacion-list"></div>
+      </div>
+
+      <div class="votacion-detail" id="votacion-detail">
+        <div style="display:flex;align-items:center;justify-content:center;height:300px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;text-align:center;">
+          ← Selecciona una votación<br>para ver el desglose
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <section id="estadisticas" class="section">
+    <div id="dashboard-placeholder" style="display:flex;align-items:center;justify-content:center;height:300px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;text-align:center;">
+      Importa ZIPs de votaciones para ver las estadísticas
+    </div>
+    <div id="dashboard-content" style="display:none">
+
+      <!-- Row 1: KPI cards -->
+      <div class="dash-kpi-row" id="dash-kpis"></div>
+
+      <!-- Row 2: approval by tipo + party alignment -->
+      <div class="dash-two-col">
+        <div class="dash-card">
+          <div class="dash-card-title">Aprobación por tipo de votación</div>
+          <div id="dash-tipo-chart"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-title">¿Con quién vota cada partido?</div>
+          <div class="dash-card-sub">% de votaciones en que coinciden</div>
+          <div id="dash-align-chart"></div>
+        </div>
+      </div>
+
+      <!-- Row 3: party presence + monthly timeline -->
+      <div class="dash-two-col">
+        <div class="dash-card">
+          <div class="dash-card-title">Participación por partido</div>
+          <div class="dash-card-sub">Votos emitidos vs escaños</div>
+          <div id="dash-presence-chart"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-title">Votaciones por mes</div>
+          <div id="dash-monthly-chart"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="diputados" class="section">
+    <div id="dip-section-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;text-align:center;gap:0.75rem;">
+      <span style="font-size:2.5rem;opacity:0.3">👤</span>
+      Importa ZIPs de votaciones para ver<br>los perfiles de los diputados
+    </div>
+    <div id="dip-section-content" style="display:none">
+      <div class="dip-section-layout">
+        <!-- Left: search + list -->
+        <div class="dip-section-left">
+          <input class="dip-section-search" id="dip-section-search" type="text"
+            placeholder="🔍  Buscar diputado…" oninput="filterDiputadosList()">
+          <div class="dip-section-filters" id="dip-section-filters"></div>
+          <div class="dip-section-list" id="dip-section-list"></div>
+        </div>
+        <!-- Right: profile -->
+        <div class="dip-section-profile" id="dip-section-profile">
+          <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:0.75rem;text-align:center;">
+            ← Selecciona un diputado
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<footer>
+  Datos basados en la composición del Congreso a partir de las elecciones del 23 de julio de 2023 · Solo con fines informativos
+</footer>
+
+<div id="tooltip"></div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+/* ── data.js ── */
+// ── Master lookup: grupo code → display metadata ──────────
+// Used to infer PARTIES dynamically from imported ZIPs.
+// Covers all modern legislatures. Unknown codes get a grey fallback.
+// ── REPO CONFIG ───────────────────────────────────────────
+// Set to your GitHub raw base URL to enable "Load from repo"
+const REPO_RAW_BASE = 'https://raw.githubusercontent.com/xBaank/VotacionesCongreso/main';
+
+const GRUPO_META = {
+  // XV (2023-): códigos activos
+  'GP':            { id: 'pp',          name: 'PP',        full: 'Partido Popular',                          color: '#1e77c2', side: 'derecha',    order: 8 },
+  'GS':            { id: 'psoe',        name: 'PSOE',      full: 'Partido Socialista Obrero Español',        color: '#e4002b', side: 'izquierda',  order: 4 },
+  'GVOX':          { id: 'vox',         name: 'VOX',       full: 'VOX',                                      color: '#6abf4b', side: 'derecha',    order: 9 },
+  'GSUMAR':        { id: 'sumar',       name: 'SUMAR',     full: 'Grupo Parlamentario Plurinacional SUMAR',  color: '#c040d0', side: 'izquierda',  order: 1 },
+  'GR':            { id: 'erc',         name: 'ERC',       full: 'Esquerra Republicana de Catalunya',        color: '#f5b222', side: 'izquierda',  order: 2 },
+  'GJxCAT':        { id: 'junts',       name: 'JUNTS',     full: 'Junts per Catalunya',                      color: '#17a58d', side: 'derecha',    order: 7 },
+  'GEH Bildu':     { id: 'bildu',       name: 'EH BILDU',  full: 'EH Bildu',                                 color: '#95c11f', side: 'izquierda',  order: 0 },
+  'GV (EAJ-PNV)':  { id: 'pnv',         name: 'PNV',       full: 'Partido Nacionalista Vasco (EAJ-PNV)',     color: '#3b7d4e', side: 'centro',     order: 5 },
+  'GMx':           { id: 'otros',       name: 'G. MIXTO',  full: 'Grupo Mixto',                              color: '#607080', side: 'varios',     order: 3 },
+  // XIV/XIII (2019-2023): grupos adicionales
+  'GUP-EC-GC':     { id: 'podemos',     name: 'PODEMOS',   full: 'Unidas Podemos-En Comú Podem-Galicia en Común', color: '#7b2d8b', side: 'izquierda', order: 1 },
+  'GCUP-EC-GC':    { id: 'podemos',     name: 'PODEMOS',   full: 'Unidas Podemos-En Comú Podem-Galicia en Común', color: '#7b2d8b', side: 'izquierda', order: 1 },
+  'GCs':           { id: 'ciudadanos',  name: 'Cs',        full: 'Ciudadanos',                               color: '#eb6109', side: 'centro',     order: 6 },
+  'GCiudadanos':   { id: 'ciudadanos',  name: 'Cs',        full: 'Ciudadanos',                               color: '#eb6109', side: 'centro',     order: 6 },
+  'GPlu':          { id: 'plural',      name: 'G. PLURAL', full: 'Grupo Plural',                             color: '#778899', side: 'varios',     order: 3 },
+  'gplu':          { id: 'plural',      name: 'G. PLURAL', full: 'Grupo Plural',                             color: '#778899', side: 'varios',     order: 3 },
+  'GPLU':          { id: 'plural',      name: 'G. PLURAL', full: 'Grupo Plural',                             color: '#778899', side: 'varios',     order: 3 },
+  // XII (2016-2019)
+  'GDL':           { id: 'pdecat',      name: 'PDECat',    full: 'PDECat / Democràcia i Llibertat',          color: '#003da5', side: 'derecha',    order: 7 },
+  'GC-D':          { id: 'pdecat',      name: 'PDECat',    full: 'PDECat / Democràcia i Llibertat',          color: '#003da5', side: 'derecha',    order: 7 },
+  // XI (ene-jul 2016) — mismos grupos que XII, legislatura fallida
+  // X (2011-2016)
+  'GIU':           { id: 'iu',          name: 'IU',        full: 'Izquierda Unida',                          color: '#c1272d', side: 'izquierda',  order: 1 },
+  'GCUP':          { id: 'podemos',     name: 'PODEMOS',   full: 'Podemos',                                  color: '#7b2d8b', side: 'izquierda',  order: 1 },
+  'GIU-ICV-EUiA-CHA': { id: 'iu',      name: 'IU',        full: 'IU, ICV-EUiA, CHA: La Izquierda Plural',  color: '#c1272d', side: 'izquierda',  order: 1 },
+  'GUpC':          { id: 'podemos',     name: 'PODEMOS',   full: 'Unidos Podemos',                           color: '#7b2d8b', side: 'izquierda',  order: 1 },
+  'GUPiX-En Comú Podem-En Marea': { id: 'podemos', name: 'PODEMOS', full: 'En Comú Podem / En Marea',       color: '#7b2d8b', side: 'izquierda',  order: 1 },
+  'GUEM':          { id: 'podemos',     name: 'PODEMOS',   full: 'Unidos Podemos / En Comú Podem / En Marea', color: '#7b2d8b', side: 'izquierda', order: 1 },
+  'GCiU':          { id: 'ciu',         name: 'CiU',       full: 'Convergència i Unió',                      color: '#003da5', side: 'derecha',    order: 7 },
+  'GCIU-U':        { id: 'ciu',         name: 'CiU',       full: 'Convergència i Unió',                      color: '#003da5', side: 'derecha',    order: 7 },
+  'GUPyD':         { id: 'upyd',        name: 'UPyD',      full: 'Unión Progreso y Democracia',              color: '#e91e8c', side: 'centro',     order: 6 },
+  'GUPYD':         { id: 'upyd',        name: 'UPyD',      full: 'Unión Progreso y Democracia',              color: '#e91e8c', side: 'centro',     order: 6 },
+  'GAMAIPC':       { id: 'amaipc',      name: 'AMAIPC',    full: 'Amaiur, IPC',                              color: '#95c11f', side: 'izquierda',  order: 0 },
+};
+
+// ── Dynamic PARTIES — rebuilt from imported ZIPs ──────────
+// Fallback used before any ZIPs are loaded (XV composition)
+const PARTIES_DEFAULT = [
+  { id: 'pp',    name: 'PP',       full: 'Partido Popular',                          seats: 137, color: '#1e77c2', side: 'derecha',   order: 8 },
+  { id: 'psoe',  name: 'PSOE',     full: 'Partido Socialista Obrero Español',        seats: 121, color: '#e4002b', side: 'izquierda', order: 4 },
+  { id: 'vox',   name: 'VOX',      full: 'VOX',                                      seats: 33,  color: '#6abf4b', side: 'derecha',   order: 9 },
+  { id: 'sumar', name: 'SUMAR',    full: 'Grupo Parlamentario Plurinacional SUMAR',  seats: 26,  color: '#c040d0', side: 'izquierda', order: 1 },
+  { id: 'erc',   name: 'ERC',      full: 'Esquerra Republicana de Catalunya',        seats: 7,   color: '#f5b222', side: 'izquierda', order: 2 },
+  { id: 'junts', name: 'JUNTS',    full: 'Junts per Catalunya',                      seats: 7,   color: '#17a58d', side: 'derecha',   order: 7 },
+  { id: 'bildu', name: 'EH BILDU', full: 'EH Bildu',                                 seats: 6,   color: '#95c11f', side: 'izquierda', order: 0 },
+  { id: 'pnv',   name: 'PNV',      full: 'Partido Nacionalista Vasco (EAJ-PNV)',     seats: 5,   color: '#3b7d4e', side: 'centro',    order: 5 },
+  { id: 'otros', name: 'G. MIXTO', full: 'Grupo Mixto',                              seats: 8,   color: '#607080', side: 'varios',    order: 3 },
+];
+
+let PARTIES = [...PARTIES_DEFAULT];
+let ORDERED_PARTIES = PARTIES.sort((a,b) => a.order - b.order).map(p => p.id);
+
+// Rebuild PARTIES from imported votaciones for the active legislature
+function inferParties() {
+  const vots = activeLegislatura
+    ? importedVotaciones.filter(v => v.legislatura === activeLegislatura)
+    : importedVotaciones;
+
+  if (!vots.length) {
+    PARTIES = [...PARTIES_DEFAULT];
+    ORDERED_PARTIES = [...PARTIES].sort((a,b) => a.order - b.order).map(p => p.id);
+    return;
+  }
+
+  // Collect per-party seat counts across all votaciones, then use median
+  // (avoids inflation from substitutions at the max end)
+  const pidMeta    = {};   // pid → meta
+  const pidSamples = {};   // pid → [count per votacion]
+
+  for (const v of vots) {
+    if (!v._rawGrupos) continue;
+    const countInV = {};
+    for (const [grupo, diputados] of Object.entries(v._rawGrupos)) {
+      const meta = GRUPO_META[grupo];
+      const pid  = meta ? meta.id : 'otros';
+      if (!pidMeta[pid])
+        pidMeta[pid] = meta || { id: 'otros', name: 'G. MIXTO', full: 'Grupo Mixto / Plural', color: '#607080', side: 'varios', order: 99 };
+      countInV[pid] = (countInV[pid] || 0) + diputados.length;
+    }
+    for (const [pid, count] of Object.entries(countInV)) {
+      if (!pidSamples[pid]) pidSamples[pid] = [];
+      pidSamples[pid].push(count);
+    }
+  }
+
+  if (!Object.keys(pidSamples).length) {
+    PARTIES = [...PARTIES_DEFAULT];
+    ORDERED_PARTIES = [...PARTIES].sort((a,b) => a.order - b.order).map(p => p.id);
+    return;
+  }
+
+  // Median helper
+  function median(arr) {
+    const s = [...arr].sort((a, b) => a - b);
+    const m = Math.floor(s.length / 2);
+    return s.length % 2 ? s[m] : Math.round((s[m-1] + s[m]) / 2);
+  }
+
+  const rawParties = Object.entries(pidSamples).map(([pid, samples]) => ({
+    ...pidMeta[pid],
+    id:    pid,
+    seats: median(samples),
+  }));
+
+  // Normalize total to 350 proportionally
+  const rawTotal = rawParties.reduce((s, p) => s + p.seats, 0);
+  if (rawTotal !== 350 && rawTotal > 0) {
+    let assigned = 0;
+    rawParties.forEach((p, i) => {
+      if (i < rawParties.length - 1) {
+        p.seats = Math.round(p.seats / rawTotal * 350);
+        assigned += p.seats;
+      } else {
+        p.seats = 350 - assigned; // last party absorbs rounding remainder
+      }
+    });
+  }
+
+  PARTIES = rawParties.sort((a, b) => a.order - b.order);
+
+  ORDERED_PARTIES = PARTIES.map(p => p.id);
+}
+
+const TOTAL = 350;
+
+
+
+/* ── hemiciclo.js ── */
+const tooltip = document.getElementById('tooltip');
+
+function showTooltip(e, html) {
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+  moveTooltip(e);
+}
+function moveTooltip(e) {
+  tooltip.style.left = (e.clientX + 12) + 'px';
+  tooltip.style.top  = (e.clientY + 12) + 'px';
+}
+function hideTooltip() {
+  tooltip.style.display = 'none';
+}
+
+const ROW_SEATS = [26, 31, 37, 42, 47, 52, 57, 58]; // 8 rows = 350
+
+function buildHemiciclo() {
+  const cx = 300, cy = 290;
+  const innerR = 72, rowSpacing = 22;
+  let allSeats = [];
+
+  ROW_SEATS.forEach((count, r) => {
+    const radius = innerR + r * rowSpacing;
+    for (let s = 0; s < count; s++) {
+      // spread evenly across 180° with a small margin at edges
+      const angle = Math.PI * (1 - s / (count - 1));
+      allSeats.push({
+        x: cx + radius * Math.cos(angle),
+        y: cy - radius * Math.sin(angle),
+        r
+      });
+    }
+  });
+
+  // Safety: trim to exactly TOTAL seats
+  return allSeats.slice(0, TOTAL);
+}
+
+// Sort seats left→right then assign parties
+// Political order: EH Bildu, Sumar, ERC, BNG/otros, PSOE, PNV, CC, Junts, PP, VOX, UPN
+// ORDERED_PARTIES now built dynamically by inferParties()
+
+function assignSeats(rawSeats) {
+  // Sort seats by x position (left → right)
+  const seats = [...rawSeats].sort((a, b) => a.x - b.x);
+  // Assign party to each seat block
+  const assignMap = [];
+  const partyMap = Object.fromEntries(PARTIES.map(p => [p.id, p]));
+  let idx = 0;
+  for (const pid of ORDERED_PARTIES) {
+    const p = partyMap[pid];
+    if (!p) continue;
+    for (let i = 0; i < p.seats && idx < seats.length; i++, idx++) {
+      assignMap.push({ ...seats[idx], party: p });
+    }
+  }
+  // fill remainder
+  while (idx < seats.length) {
+    assignMap.push({ ...seats[idx], party: partyMap['otros'] });
+    idx++;
+  }
+  return assignMap;
+}
+
+let hemicicloSeats = [];
+
+function renderHemiciclo(highlightParty = null) {
+  const svg = document.getElementById('hemiciclo-svg');
+  svg.innerHTML = '';
+
+  const rawSeats = buildHemiciclo();
+  const seats = assignSeats(rawSeats);
+  hemicicloSeats = seats;
+
+  seats.forEach((s, i) => {
+    s.seatIdx = i;  // store index on seat for diputado lookup
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.classList.add('seat');
+    g.dataset.idx = i;
+
+    const isHighlighted = !highlightParty || s.party.id === highlightParty;
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx', s.x.toFixed(1));
+    c.setAttribute('cy', s.y.toFixed(1));
+    c.setAttribute('r', '3.8');
+    c.setAttribute('fill', s.party.color);
+    c.setAttribute('opacity', isHighlighted ? '0.92' : '0.12');
+    g.appendChild(c);
+
+    g.addEventListener('mouseenter', (e) => {
+      const dip = seatDiputadoMap[i];
+      showTooltip(e, dip
+        ? `<strong>${dip}</strong><br><span style="opacity:0.7">${s.party.name} · clic para ver perfil</span>`
+        : `<strong>${s.party.name}</strong><br>${s.party.full}`);
+    });
+    g.addEventListener('mousemove', moveTooltip);
+    g.addEventListener('mouseleave', hideTooltip);
+    g.addEventListener('click', () => {
+      const dip = seatDiputadoMap[i];
+      if (dip && diputadoIndex[dip]) showDiputadoModal(diputadoIndex[dip]);
+    });
+    g.style.cursor = seatDiputadoMap[i] ? 'pointer' : 'default';
+    svg.appendChild(g);
+  });
+}
+
+// ─────────────────────────────────────────────
+// MAYORÍA BAR
+// ─────────────────────────────────────────────
+function renderMayoriaBar() {
+  const container = document.getElementById('mayoria-bar');
+  if (!container) return;
+
+  // Build segments in political order
+  const partyMap = Object.fromEntries(PARTIES.map(p => [p.id, p]));
+  const segments = ORDERED_PARTIES.map(id => partyMap[id]).filter(Boolean);
+
+  const midline = `<div class="bar-midline"></div>`;
+
+  const segsHtml = segments.map(p => {
+    const pct = (p.seats / TOTAL * 100).toFixed(2);
+    return `<div class="bar-segment"
+      style="width:${pct}%;background:${p.color};"
+      data-party="${p.id}"
+      title="${p.name} — ${p.seats} escaños (${pct}%)"
+    ></div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="mayoria-label">Umbral de mayoría absoluta</div>
+    <div class="bar-track" style="position:relative;">
+      ${segsHtml}
+      ${midline}
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:1.4rem;font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:var(--muted);">
+      <span style="color:var(--muted)">← Izquierda</span>
+      <span style="color:var(--muted)">Derecha →</span>
+    </div>
+  `;
+
+  // Wire hover to highlight hemiciclo
+  container.querySelectorAll('.bar-segment').forEach(seg => {
+    seg.addEventListener('mouseenter', e => {
+      const pid = seg.dataset.party;
+      const p = partyMap[pid];
+      renderHemiciclo(pid);
+      showTooltip(e, `<strong>${p.name}</strong> · ${p.seats} esc.`);
+      document.querySelectorAll('.partido-row').forEach(r => r.classList.remove('highlighted'));
+      const row = document.querySelector(`.partido-row[data-id="${pid}"]`);
+      if (row) row.classList.add('highlighted');
+    });
+    seg.addEventListener('mousemove', moveTooltip);
+    seg.addEventListener('mouseleave', () => {
+      renderHemiciclo(null);
+      hideTooltip();
+      document.querySelectorAll('.partido-row').forEach(r => r.classList.remove('highlighted'));
+    });
+  });
+}
+
+// ─────────────────────────────────────────────
+// PARTY LIST
+// ─────────────────────────────────────────────
+function renderPartidos() {
+  const container = document.getElementById('partidos-list');
+  const sorted = [...PARTIES].sort((a, b) => b.seats - a.seats);
+  container.innerHTML = '';
+
+  sorted.forEach(p => {
+    const row = document.createElement('div');
+    row.className = 'partido-row';
+    row.style.setProperty('--pc', p.color);
+    row.dataset.id = p.id;
+    row.innerHTML = `
+      <div class="partido-dot" style="background:${p.color}"></div>
+      <div>
+        <span class="partido-name">${p.name}</span>
+        <span class="partido-full-name">${p.full}</span>
+      </div>
+      <span class="partido-escanos">${p.seats}</span>
+      <span class="partido-pct">${(p.seats/TOTAL*100).toFixed(1)}%</span>
+    `;
+    row.style.borderLeftColor = p.color;
+    row.style.borderLeftWidth = '3px';
+
+    row.addEventListener('mouseenter', () => {
+      renderHemiciclo(p.id);
+      document.querySelectorAll('.partido-row').forEach(r => r.classList.remove('highlighted'));
+      row.classList.add('highlighted');
+    });
+    row.addEventListener('mouseleave', () => {
+      renderHemiciclo(null);
+      row.classList.remove('highlighted');
+    });
+
+    container.appendChild(row);
+  });
+}
+
+// ── VOTACIONES ────────────────────────────────────────────────────
+// Para añadir una votación, copia el bloque de ejemplo y rellénalo.
+//
+// Campos obligatorios:
+//   id          → número único incremental (1, 2, 3…)
+//   fecha       → texto libre, p.ej. '15 Mar 2025'
+//   tipo        → 'Proyecto de ley' | 'Proposición de ley' |
+//                 'Moción de censura' | 'Convalidación decreto' |
+//                 'Investidura' | 'Otra'
+//   titulo      → título corto de la votación
+//   descripcion → descripción de una o dos frases
+//   aprobada    → true si se aprobó, false si se rechazó
+//
+//   votos       → objeto con una entrada por cada id de partido.
+//                 Cada entrada tiene tres campos:
+//                   af → votos a favor
+//                   ec → votos en contra
+//                   ab → abstenciones
+//                 ⚠️  af + ec + ab debe ser ≤ escaños del partido.
+//                     Si un partido no votó, omite su entrada
+//                     o ponla a { af: 0, ec: 0, ab: 0 }.
+//
+// EJEMPLO DE NUEVA VOTACIÓN:
+// ─────────────────────────
+// {
+//   id: 99,
+//   fecha: '05 Feb 2025',
+//   tipo: 'Proposición de ley',
+//   titulo: 'Nombre de la proposición',
+//   descripcion: 'Descripción breve de qué se vota y por qué.',
+//   aprobada: true,
+//   votos: {
+//     pp:    { af: 0,   ec: 137, ab: 0 },
+//     psoe:  { af: 120, ec: 0,   ab: 0 },
+//     vox:   { af: 0,   ec: 33,  ab: 0 },
+//     sumar: { af: 27,  ec: 0,   ab: 0 },
+//     erc:   { af: 7,   ec: 0,   ab: 0 },
+//     junts: { af: 7,   ec: 0,   ab: 0 },
+//     bildu: { af: 6,   ec: 0,   ab: 0 },
+//     pnv:   { af: 5,   ec: 0,   ab: 0 },
+//     cc:    { af: 4,   ec: 0,   ab: 0 },
+//     otros: { af: 4,   ec: 0,   ab: 0 },
+//   }
+// },
+//
+// Fuente oficial de datos:
+//   https://www.congreso.es/es/opendata/votaciones
+//   → Selecciona legislatura XV → descarga JSON del día correspondiente.
+//   Los campos del JSON oficial se mapean así:
+//     "aFavor"       → af
+//     "enContra"     → ec
+//     "abstenciones" → ab
+
+
+/* ── votaciones.js ── */
+const VOTACIONES = [];
+
+// ─────────────────────────────────────────────
+// DIPUTADO INDEX
+// ─────────────────────────────────────────────
+let diputadoIndex = {}; // name → { nombre, pid, grupo, seats_count, votaciones: [{id,titulo,fecha,voto}] }
+
+function buildDiputadoIndex() {
+  diputadoIndex = {};
+  const vots = activeLegislatura
+    ? importedVotaciones.filter(v => v.legislatura === activeLegislatura)
+    : importedVotaciones;
+
+  for (const v of vots) {
+    if (!v.votosIndividuales) continue;
+    for (const [nombre, data] of Object.entries(v.votosIndividuales)) {
+      if (!diputadoIndex[nombre]) {
+        diputadoIndex[nombre] = {
+          nombre,
+          pid:   data.pid,
+          grupo: data.grupo,
+          vots:  []
+        };
+      }
+      diputadoIndex[nombre].vots.push({
+        id:      v.id,
+        titulo:  v.titulo,
+        fecha:   v.fecha,
+        tipo:    v.tipo,
+        voto:    data.voto,
+        aprobada: v.aprobada
+      });
+    }
+  }
+
+  // Assign diputados to seats, then re-render so tooltips/cursors update
+  assignDiputadosToSeats();
+  if (hemicicloSeats.length) renderHemiciclo(null);
+}
+
+// Map seat index → diputado name (filled by assignDiputadosToSeats)
+let seatDiputadoMap = {};
+
+function assignDiputadosToSeats() {
+  seatDiputadoMap = {};
+  if (!hemicicloSeats.length) return;
+
+  // Group diputados by party, sort alphabetically within party
+  const byParty = {};
+  for (const [nombre, d] of Object.entries(diputadoIndex)) {
+    if (!byParty[d.pid]) byParty[d.pid] = [];
+    byParty[d.pid].push(nombre);
+  }
+  for (const pid of Object.keys(byParty)) byParty[pid].sort();
+
+  // Assign in same order as seats (already party-ordered left→right)
+  let i = 0;
+  for (const seat of hemicicloSeats) {
+    const pid = seat.party.id;
+    const list = byParty[pid];
+    if (list && list.length > 0) {
+      const nombre = list.shift();
+      seatDiputadoMap[i] = nombre;
+    }
+    i++;
+  }
+}
+
+// ─────────────────────────────────────────────
+// FILTER STATE & LOGIC
+// ─────────────────────────────────────────────
+const filterState = { texto: '', tipo: '', resultado: '', partido: '', votoPartido: '' };
+let activeLegislatura = null; // null = show all (only 1 legislature loaded)
+
+function updateLegislaturaSelector() {
+  const legs = [...new Set(importedVotaciones.map(v => v.legislatura).filter(Boolean))].sort().reverse();
+  const bar   = document.getElementById('leg-selector-bar');
+  const chips = document.getElementById('leg-chips');
+  const count = document.getElementById('leg-count');
+
+  if (legs.length <= 1) {
+    bar.classList.remove('visible');
+    activeLegislatura = legs[0] || null;
+    return;
+  }
+
+  // Multiple legislatures — show selector, default to latest
+  bar.classList.add('visible');
+  if (!activeLegislatura || !legs.includes(activeLegislatura)) {
+    activeLegislatura = legs[0]; // most recent first
+  }
+
+  chips.innerHTML = legs.map(l =>
+    `<button class="leg-chip ${l === activeLegislatura ? 'active' : ''}"
+             onclick="selectLegislatura('${l}')">${l} Legislatura</button>`
+  ).join('');
+
+  const n = importedVotaciones.filter(v => v.legislatura === activeLegislatura).length;
+  count.textContent = `${n} votaciones`;
+}
+
+function selectLegislatura(leg) {
+  activeLegislatura = leg;
+  updateLegislaturaSelector();
+  inferParties();
+  populateFilterOptions();
+  renderVotacionesList();
+  // Show hemiciclo content (hidden until first import)
+  document.getElementById('hemiciclo-placeholder').style.display = 'none';
+  document.getElementById('hemiciclo-content').style.display = 'block';
+  // Update subtitle with inferred composition info
+  const totalSeats = PARTIES.reduce((s,p) => s+p.seats, 0);
+  const legLabel = activeLegislatura ? activeLegislatura + ' Legislatura' : '';
+  document.getElementById('hemiciclo-subtitle').textContent =
+    `${totalSeats} diputados inferidos · ${legLabel}`;
+  renderHemiciclo(null);   // populates hemicicloSeats first
+  renderMayoriaBar();
+  renderPartidos();
+  buildDiputadoIndex();    // then assign diputados to seats
+  renderDashboard();
+}
+
+function populateFilterOptions() {
+  // Tipos
+  const tipoSel = document.getElementById('filter-tipo');
+  const tipos = [...new Set(importedVotaciones.map(v => v.tipo).filter(Boolean))].sort();
+  tipoSel.innerHTML = '<option value="">Todos los tipos</option>' +
+    tipos.map(t => `<option value="${t}">${t}</option>`).join('');
+
+  // Partidos
+  const partSel = document.getElementById('filter-partido');
+  partSel.innerHTML = '<option value="">Partido — todos</option>' +
+    PARTIES.map(p => `<option value="${p.id}">${p.name} — ${p.full}</option>`).join('');
+}
+
+function toggleChip(which) {
+  if (filterState.resultado === which) {
+    filterState.resultado = '';
+  } else {
+    filterState.resultado = which;
+  }
+  document.getElementById('chip-aprobada').classList.toggle('active', filterState.resultado === 'aprobada');
+  document.getElementById('chip-rechazada').classList.toggle('active', filterState.resultado === 'rechazada');
+  applyFilters();
+}
+
+function applyFilters() {
+  filterState.texto       = document.getElementById('filter-search').value.trim().toLowerCase();
+  filterState.tipo        = document.getElementById('filter-tipo').value;
+  filterState.partido     = document.getElementById('filter-partido').value;
+  filterState.votoPartido = document.getElementById('filter-voto-partido').value;
+
+  // Show/hide partido-vote selector
+  const vpSel = document.getElementById('filter-voto-partido');
+  vpSel.style.display = filterState.partido ? 'block' : 'none';
+
+  // Show/hide clear button
+  const hasFilters = filterState.texto || filterState.tipo || filterState.resultado || filterState.partido;
+  document.getElementById('filter-clear-btn').style.display = hasFilters ? 'inline' : 'none';
+
+  renderVotacionesList();
+}
+
+function clearFilters() {
+  filterState.texto = filterState.tipo = filterState.resultado = filterState.partido = filterState.votoPartido = '';
+  document.getElementById('filter-search').value = '';
+  document.getElementById('filter-tipo').value = '';
+  document.getElementById('filter-partido').value = '';
+  document.getElementById('filter-voto-partido').value = '';
+  document.getElementById('filter-voto-partido').style.display = 'none';
+  document.getElementById('chip-aprobada').classList.remove('active');
+  document.getElementById('chip-rechazada').classList.remove('active');
+  document.getElementById('filter-clear-btn').style.display = 'none';
+  renderVotacionesList();
+}
+
+function getFilteredVotaciones() {
+  return importedVotaciones.filter(v => {
+    if (activeLegislatura && v.legislatura !== activeLegislatura) return false;
+    if (filterState.texto && !v.titulo.toLowerCase().includes(filterState.texto) &&
+        !v.descripcion?.toLowerCase().includes(filterState.texto)) return false;
+    if (filterState.tipo && v.tipo !== filterState.tipo) return false;
+    if (filterState.resultado === 'aprobada'  && !v.aprobada) return false;
+    if (filterState.resultado === 'rechazada' &&  v.aprobada) return false;
+    if (filterState.partido) {
+      const vp = v.votos?.[filterState.partido];
+      if (!vp) return false;
+      if (filterState.votoPartido === 'af' && !vp.af) return false;
+      if (filterState.votoPartido === 'ec' && !vp.ec) return false;
+      if (filterState.votoPartido === 'ab' && !vp.ab) return false;
+    }
+    return true;
+  });
+}
+
+// ─────────────────────────────────────────────
+// RENDER VOTACIONES LIST
+// ─────────────────────────────────────────────
+function renderVotacionesList() {
+  const container = document.getElementById('votacion-list');
+  container.innerHTML = '';
+  const allVotaciones = getFilteredVotaciones();
+  const total = importedVotaciones.length;
+  const shown = allVotaciones.length;
+  const resEl = document.getElementById('filter-results');
+  if (resEl) resEl.textContent = total > 0 && shown < total ? `${shown} de ${total} votaciones` : '';
+  allVotaciones.forEach(v => {
+    const el = document.createElement('div');
+    el.className = 'votacion-item';
+    el.dataset.id = v.id;
+    const cls = v.aprobada ? 'resultado-aprobado' : 'resultado-rechazado';
+    const sourceBadge = v.source === 'imported' ? '<span class="vot-source-imported">JSON</span>' : '';
+    const rondasBadge = (v.rondas && v.rondas > 1) ? `<span class="vot-rondas-badge">↺ ${v.rondas} rondas</span>` : '';
+    el.innerHTML = `
+      <div class="votacion-fecha">${v.fecha}${v.tipo ? ' · <span style="opacity:0.7">' + v.tipo + '</span>' : ''}${sourceBadge}${rondasBadge}</div>
+      <div class="votacion-titulo">${truncate(v.titulo, 90)}</div>
+      <span class="votacion-resultado ${cls}">${v.aprobada ? '✓ Aprobada' : '✗ Rechazada'}</span>
+    `;
+    el.dataset.id = v.id;
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.votacion-item').forEach(x => x.classList.remove('active'));
+      el.classList.add('active');
+      renderVotacionDetail(v);
+    });
+    container.appendChild(el);
+  });
+}
+
+// ─────────────────────────────────────────────
+// RENDER VOTACIÓN DETAIL
+// ─────────────────────────────────────────────
+function renderVotacionDetail(v) {
+  const panel = document.getElementById('votacion-detail');
+  if (window.innerWidth <= 768) {
+    setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+
+  let totalAF = 0, totalEC = 0, totalAB = 0;
+  PARTIES.forEach(p => {
+    const vp = v.votos[p.id] || { af: 0, ec: 0, ab: 0 };
+    totalAF += vp.af; totalEC += vp.ec; totalAB += vp.ab;
+  });
+
+  const resultClass = v.aprobada ? 'resultado-aprobado' : 'resultado-rechazado';
+
+  // Hemiciclo SVG for votación
+  const hsvg = buildVotacionSVG(v);
+
+  // Desglose rows
+  const sorted = [...PARTIES].sort((a, b) => b.seats - a.seats);
+  const desgloseRows = sorted.map(p => {
+    const vp = v.votos[p.id] || { af: 0, ec: 0, ab: 0 };
+    const total = vp.af + vp.ec + vp.ab || 1;
+    const pct = (n) => (n / p.seats * 100).toFixed(0);
+    return `
+      <div class="desglose-row">
+        <div class="desglose-dot" style="background:${p.color}"></div>
+        <span class="desglose-nombre">${p.name}</span>
+        <div class="desglose-bar-wrap">
+          <div class="dseg dseg-af" style="width:${pct(vp.af)}%"></div>
+          <div class="dseg dseg-ec" style="width:${pct(vp.ec)}%"></div>
+          <div class="dseg dseg-ab" style="width:${pct(vp.ab)}%"></div>
+          <div class="dseg-gap"></div>
+        </div>
+        <span class="desglose-num af-num">${vp.af || '—'}</span>
+        <span class="desglose-num ec-num">${vp.ec || '—'}</span>
+        <span class="desglose-num ab-num">${vp.ab || '—'}</span>
+      </div>
+    `;
+  }).join('');
+
+  panel.innerHTML = `
+    <div class="vd-header">
+      <div class="vd-fecha">${v.fecha}</div>
+      <div class="vd-titulo">${v.titulo}</div>
+      <div class="vd-descripcion">${v.descripcion}</div>
+      ${v.votRef ? '<div style="font-size:0.78rem;opacity:0.5;margin-top:4px;font-family:monospace">' + v.votRef + '</div>' : ''}
+      <div style="margin-top:0.6rem;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span class="votacion-resultado ${resultClass}">${v.aprobada ? '✓ Aprobada' : '✗ Rechazada'}</span>
+        ${(v.rondas && v.rondas > 1) ? `<span class="vot-rondas-badge">↺ ${v.rondas} rondas por empate</span>` : ''}
+      </div>
+    </div>
+
+    <div class="vd-totales">
+      <div class="total-box a-favor">
+        <span class="total-numero">${totalAF}</span>
+        <span class="total-label">A favor</span>
+      </div>
+      <div class="total-box en-contra">
+        <span class="total-numero">${totalEC}</span>
+        <span class="total-label">En contra</span>
+      </div>
+      <div class="total-box abstenciones">
+        <span class="total-numero">${totalAB}</span>
+        <span class="total-label">Abstención</span>
+      </div>
+    </div>
+
+    <div class="votacion-hemiciclo-wrap">
+      <div class="votacion-hemiciclo-title">Distribución del voto en el hemiciclo</div>
+      ${hsvg}
+      <div class="voto-leyenda" style="margin-top:0.6rem;">
+        <div class="vl-item"><div class="vl-dot" style="background:#4ade80"></div>A favor</div>
+        <div class="vl-item"><div class="vl-dot" style="background:#f87171"></div>En contra</div>
+        <div class="vl-item"><div class="vl-dot" style="background:#64748b"></div>Abstención</div>
+        <div class="vl-item"><div class="vl-dot" style="background:#2d3748"></div>No vota</div>
+      </div>
+    </div>
+
+    <div class="partido-desglose">
+      <div class="desglose-title">Desglose por partido</div>
+      <div class="desglose-row desglose-header" style="background:transparent;border-color:transparent;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">
+        <div></div><div>Partido</div><div class="desglose-bar-wrap"></div>
+        <div style="text-align:center;color:#4ade80">Sí</div>
+        <div style="text-align:center;color:#f87171">No</div>
+        <div style="text-align:center;color:#64748b">Ab</div>
+      </div>
+      <div class="desglose-rows">${desgloseRows}</div>
+    </div>
+  `;
+}
+
+function buildVotacionSVG(v) {
+  const cx = 300, cy = 295;
+  const innerR = 70, rowSpacing = 15, seatDiam = 5.6;
+  const rowCount = 17;
+
+  // Reuse the seat positions from hemicicloSeats, or rebuild
+  const rawSeats = buildHemiciclo();
+  const seats = assignSeats(rawSeats);
+
+  // Color by vote
+  const voteColorMap = {
+    af: '#4ade80',
+    ec: '#f87171',
+    ab: '#64748b',
+    none: '#1e2a38'
+  };
+
+  // Build per-party vote queue
+  const voteQueues = {};
+  PARTIES.forEach(p => {
+    const vp = v.votos[p.id] || { af: 0, ec: 0, ab: 0 };
+    const q = [];
+    for (let i = 0; i < vp.af; i++) q.push('af');
+    for (let i = 0; i < vp.ec; i++) q.push('ec');
+    for (let i = 0; i < vp.ab; i++) q.push('ab');
+    const none = p.seats - vp.af - vp.ec - vp.ab;
+    for (let i = 0; i < none; i++) q.push('none');
+    voteQueues[p.id] = q;
+  });
+
+  const circles = seats.map(s => {
+    const q = voteQueues[s.party.id];
+    const vote = q && q.length > 0 ? q.shift() : 'none';
+    const color = voteColorMap[vote];
+    return `<circle cx="${s.x.toFixed(1)}" cy="${s.y.toFixed(1)}" r="3.8" fill="${color}" opacity="0.9"/>`;
+  }).join('\n');
+
+  return `<svg viewBox="0 0 600 300" style="width:100%;height:auto;">${circles}</svg>`;
+}
+
+// ─────────────────────────────────────────────
+// (tooltip functions defined earlier)
+
+// ─────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────
+
+
+/* ── dashboard.js ── */
+// ─────────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────────
+function renderDashboard() {
+  const vots = activeLegislatura
+    ? importedVotaciones.filter(v => v.legislatura === activeLegislatura)
+    : importedVotaciones;
+  const placeholder = document.getElementById('dashboard-placeholder');
+  const dashContent = document.getElementById('dashboard-content');
+
+  if (!vots.length) {
+    placeholder.style.display = 'flex';
+    dashContent.style.display = 'none';
+    return;
+  }
+  placeholder.style.display = 'none';
+  dashContent.style.display = 'block';
+
+  renderKPIs(vots);
+  renderTipoChart(vots);
+  renderAlignmentMatrix(vots);
+  renderPresenceChart(vots);
+  renderMonthlyChart(vots);
+}
+
+// ── KPIs ─────────────────────────────────────
+function renderKPIs(vots) {
+  const total     = vots.length;
+  const aprobadas = vots.filter(v => v.aprobada).length;
+  const pct       = total ? Math.round(aprobadas / total * 100) : 0;
+  const meses     = new Set(vots.map(v => v.fecha.slice(-8))).size; // approx unique months
+  const empates   = vots.filter(v => v.rondas > 1).length;
+
+  document.getElementById('dash-kpis').innerHTML = [
+    { value: total,       label: 'Votaciones totales' },
+    { value: aprobadas,   label: 'Aprobadas' },
+    { value: pct + '%',   label: 'Tasa de aprobación' },
+    { value: empates,     label: 'Con rondas de empate' },
+  ].map(k => `
+    <div class="dash-kpi">
+      <div class="dash-kpi-value">${k.value}</div>
+      <div class="dash-kpi-label">${k.label}</div>
+    </div>`).join('');
+}
+
+// ── APROBACIÓN POR TIPO ──────────────────────
+function renderTipoChart(vots) {
+  const byTipo = {};
+  for (const v of vots) {
+    const t = v.tipo || 'Otro';
+    if (!byTipo[t]) byTipo[t] = { total: 0, aprobadas: 0 };
+    byTipo[t].total++;
+    if (v.aprobada) byTipo[t].aprobadas++;
+  }
+  const rows = Object.entries(byTipo)
+    .sort((a, b) => b[1].total - a[1].total)
+    .slice(0, 10);
+
+  document.getElementById('dash-tipo-chart').innerHTML = rows.map(([tipo, d]) => {
+    const pct = Math.round(d.aprobadas / d.total * 100);
+    const color = pct >= 50 ? '#4caf80' : '#e05050';
+    return `<div class="dbar-row">
+      <div class="dbar-label" title="${tipo}">${tipo}</div>
+      <div class="dbar-track">
+        <div class="dbar-fill" style="width:${pct}%;background:${color}"></div>
+      </div>
+      <div class="dbar-value">${pct}%</div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--muted);margin:-0.35rem 0 0.6rem 0;padding-left:calc(90px + 0.5rem)">${d.aprobadas}/${d.total}</div>`;
+  }).join('');
+}
+
+// ── ALIGNMENT MATRIX ─────────────────────────
+function renderAlignmentMatrix(vots) {
+  // Only parties with actual vote data
+  const active = PARTIES.filter(p =>
+    vots.some(v => v.votos?.[p.id] && (v.votos[p.id].af + v.votos[p.id].ec + v.votos[p.id].ab) > 0)
+  );
+
+  // For each pair, count how many votaciones they voted the SAME way (both af, both ec, or both ab)
+  function dominant(vp) {
+    if (!vp) return null;
+    if (vp.af > vp.ec && vp.af > vp.ab) return 'af';
+    if (vp.ec > vp.af && vp.ec > vp.ab) return 'ec';
+    if (vp.ab > vp.af && vp.ab > vp.ec) return 'ab';
+    return null;
+  }
+
+  const n = active.length;
+  const agree = Array.from({length: n}, () => Array(n).fill(0));
+  const total = Array.from({length: n}, () => Array(n).fill(0));
+
+  for (const v of vots) {
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        const di = dominant(v.votos?.[active[i].id]);
+        const dj = dominant(v.votos?.[active[j].id]);
+        if (di && dj) {
+          total[i][j]++;
+          total[j][i]++;
+          if (di === dj) { agree[i][j]++; agree[j][i]++; }
+        }
+      }
+    }
+  }
+
+  function cellColor(pct) {
+    if (pct === null) return 'rgba(255,255,255,0.04)';
+    // green for high agreement, red for low
+    const r = Math.round(224 - pct * 1.3);
+    const g = Math.round(60  + pct * 1.4);
+    return `rgba(${r},${g},70,0.55)`;
+  }
+
+  const header = `<tr><th></th>${active.map(p => `<th title="${p.full}">${p.name}</th>`).join('')}</tr>`;
+  const rows = active.map((pi, i) =>
+    `<tr>
+      <td class="align-row-label">${pi.name}</td>
+      ${active.map((pj, j) => {
+        if (i === j) return `<td style="background:rgba(192,155,90,0.2);color:var(--gold)">—</td>`;
+        const t = total[i][j];
+        const pct = t > 0 ? Math.round(agree[i][j] / t * 100) : null;
+        return `<td style="background:${cellColor(pct)};color:#ddd" title="${pi.name} y ${pj.name}: ${pct ?? '?'}% coincidencia (${t} votaciones)">${pct !== null ? pct + '%' : '?'}</td>`;
+      }).join('')}
+    </tr>`
+  ).join('');
+
+  document.getElementById('dash-align-chart').innerHTML =
+    `<div class="align-matrix"><table class="align-table"><thead>${header}</thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// ── PRESENCE / PARTICIPATION ──────────────────
+function renderPresenceChart(vots) {
+  const active = PARTIES.filter(p =>
+    vots.some(v => v.votos?.[p.id])
+  );
+
+  const rows = active.map(p => {
+    let cast = 0;
+    for (const v of vots) {
+      const vp = v.votos?.[p.id];
+      if (vp) cast += vp.af + vp.ec + vp.ab;
+    }
+    const maxPossible = p.seats * vots.length;
+    const pct = maxPossible > 0 ? Math.round(cast / maxPossible * 100) : 0;
+    return { p, pct, cast, maxPossible };
+  }).sort((a, b) => b.pct - a.pct);
+
+  document.getElementById('dash-presence-chart').innerHTML = rows.map(({ p, pct, cast }) =>
+    `<div class="dbar-row">
+      <div class="dbar-label" title="${p.full}">${p.name}</div>
+      <div class="dbar-track">
+        <div class="dbar-fill" style="width:${pct}%;background:${p.color}"></div>
+      </div>
+      <div class="dbar-value">${pct}%</div>
+    </div>`
+  ).join('');
+}
+
+// ── MONTHLY TIMELINE ─────────────────────────
+function renderMonthlyChart(vots) {
+  const MONTHS_ES = {Ene:'Ene',Feb:'Feb',Mar:'Mar',Abr:'Abr',May:'May',Jun:'Jun',
+                     Jul:'Jul',Ago:'Ago',Sep:'Sep',Oct:'Oct',Nov:'Nov',Dic:'Dic'};
+  const MONTH_IDX = {Ene:0,Feb:1,Mar:2,Abr:3,May:4,Jun:5,Jul:6,Ago:7,Sep:8,Oct:9,Nov:10,Dic:11};
+
+  const byMonth = {};
+  for (const v of vots) {
+    const parts = (v.fecha || '').split(' ');
+    if (parts.length < 3) continue;
+    const key = `${parts[2]}-${String(MONTH_IDX[parts[1]] + 1).padStart(2,'0')}`;
+    const label = `${parts[1]} ${parts[2]}`;
+    if (!byMonth[key]) byMonth[key] = { label, total: 0, aprobadas: 0 };
+    byMonth[key].total++;
+    if (v.aprobada) byMonth[key].aprobadas++;
+  }
+
+  const sorted = Object.entries(byMonth).sort(([a], [b]) => a.localeCompare(b));
+  if (!sorted.length) return;
+  const maxVal = Math.max(...sorted.map(([, d]) => d.total));
+
+  const bars = sorted.map(([, d]) => {
+    const h = Math.round(d.total / maxVal * 70);
+    const pct = Math.round(d.aprobadas / d.total * 100);
+    return `<div class="month-bar-wrap">
+      <div class="month-bar" style="height:${h}px;background:var(--gold);opacity:0.8"
+           data-tip="${d.label}: ${d.total} votaciones (${pct}% aprobadas)"></div>
+      <div class="month-label">${d.label.slice(0,3)}<br>${d.label.slice(-2)}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('dash-monthly-chart').innerHTML =
+    `<div class="month-chart">${bars}</div>`;
+}
+
+
+/* ── app.js ── */
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function navigateToVotacion(votId) {
+  // Switch to votaciones tab
+  const btn = document.querySelector('.nav-tab[onclick*="votaciones"]');
+  showSection('votaciones', btn);
+
+  // Find the votacion object
+  const v = importedVotaciones.find(x => x.id === votId);
+  if (!v) return;
+
+  // Highlight the item in the list (it may be filtered out — reset filters first)
+  const searchEl = document.getElementById('filter-search');
+  if (searchEl) searchEl.value = '';
+  applyFilters();
+
+  // Small delay to let list render, then scroll to and open
+  setTimeout(() => {
+    const item = document.querySelector(`.votacion-item[data-id="${votId}"]`);
+    if (item) {
+      document.querySelectorAll('.votacion-item').forEach(x => x.classList.remove('active'));
+      item.classList.add('active');
+      item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    renderVotacionDetail(v);
+  }, 50);
+}
+
+// ─────────────────────────────────────────────
+// CONGRESO.ES JSON IMPORTER
+// ─────────────────────────────────────────────
+// Maps official grupo codes (from JSON "grupo" field) → our party IDs
+// Grupo codes vary by legislature. Maps grupo code → party id per legislature.
+// Single source of truth: derive partido from GRUPO_META directly.
+// No per-legislature map needed — each grupo code already maps to the right party.
+function getGrupoMap() {
+  const m = {};
+  for (const [code, meta] of Object.entries(GRUPO_META)) m[code] = meta.id;
+  return m;
+}
+
+// Extra votaciones loaded from JSON files
+let importedVotaciones = [];
+let importNextId = 1000;
+
+function parseCongresoJSON(json, filename) {
+  try {
+    const info = json.informacion || {};
+    // Infer legislature from date (no explicit field in JSON)
+    function inferLegislatura(fechaStr) {
+      if (!fechaStr) return 'XV';
+      const m = fechaStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (!m) return 'XV';
+      const d = new Date(+m[3], +m[2]-1, +m[1]);
+      if (d >= new Date(2023, 7, 17)) return 'XV';
+      if (d >= new Date(2019, 11, 3))  return 'XIV';
+      if (d >= new Date(2019, 2, 5))   return 'XIII';
+      if (d >= new Date(2016, 6, 19))  return 'XII';
+      if (d >= new Date(2016, 0, 13))  return 'XI';
+      if (d >= new Date(2011, 11, 13)) return 'X';
+      return 'anterior';
+    }
+    const legislatura = inferLegislatura(info.fecha || '');
+    const totales = json.totales || {};
+    const vots = json.votaciones || [];
+
+    // Real title = textoExpediente (law name); fallback to tituloSubGrupo or filename
+    const titulo = info.textoExpediente || info.tituloSubGrupo || filename.replace('.json','');
+    // Subtitle for description (section heading + amendment if any)
+    const subtitulo = [info.titulo, info.tituloSubGrupo, info.textoSubGrupo]
+      .filter(Boolean).join(' · ');
+    // Always append session+votacion number so identical-looking votes are distinguishable
+    const votRef = `Sesión ${info.sesion ?? '?'}, votación ${info.numeroVotacion ?? '?'}`;
+
+    const fecha = info.fecha || '';
+    const tipo  = inferTipo(titulo);
+
+    const afavor    = totales.afavor    || 0;
+    const enContra  = totales.enContra  || 0;
+    const aprobada  = afavor > enContra;
+
+    // Aggregate votes by grupo AND by individual diputado
+    const grupoMap = getGrupoMap();
+    const votos = {};
+    const _rawGrupos = {};       // grupo → Set of diputado names (for seat inference)
+    const votosIndividuales = {}; // diputado name → { voto, grupo, pid }
+    for (const v of vots) {
+      const pid = grupoMap[v.grupo];
+      if (v.grupo && v.diputado) {
+        if (!_rawGrupos[v.grupo]) _rawGrupos[v.grupo] = new Set();
+        _rawGrupos[v.grupo].add(v.diputado);
+        // Store individual vote
+        const votoNorm = (v.voto || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        let votoKey = null;
+        if (votoNorm === 'si')               votoKey = 'af';
+        else if (votoNorm === 'no')          votoKey = 'ec';
+        else if (votoNorm.startsWith('abstenc')) votoKey = 'ab';
+        else                                 votoKey = 'nv'; // no vota / ausente
+        votosIndividuales[v.diputado] = { voto: votoKey, grupo: v.grupo, pid: pid || 'otros' };
+      }
+      if (!pid) continue;
+      if (!votos[pid]) votos[pid] = { af: 0, ec: 0, ab: 0 };
+      const voto = (v.voto || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      if (voto === 'si')               votos[pid].af++;
+      else if (voto === 'no')          votos[pid].ec++;
+      else if (voto.startsWith('abstenc')) votos[pid].ab++;
+    }
+    const rawGruposArr = {};
+    for (const [g, s] of Object.entries(_rawGrupos)) rawGruposArr[g] = [...s];
+
+    const dedupKey = `${info.sesion ?? ''}-${info.numeroVotacion ?? ''}`;
+    // groupKey: identifies repeated votes on the same point in the same session
+    const groupKey = `${info.sesion ?? ''}-${(info.textoExpediente || '').slice(0,80)}-${info.textoSubGrupo ?? ''}`;
+    return {
+      id:          importNextId++,
+      legislatura,
+      _rawGrupos:  rawGruposArr,
+      votosIndividuales,
+      dedupKey,
+      groupKey,
+      sesionNum:   info.sesion,
+      numVotacion: info.numeroVotacion,
+      fecha:       formatFechaES(fecha),
+      tipo,
+      titulo:      titulo,
+      descripcion: subtitulo || titulo,
+      votRef,
+      aprobada,
+      votos,
+      source:      'imported'
+    };
+  } catch(e) {
+    console.warn('parseCongresoJSON error:', e, filename);
+    return null;
+  }
+}
+
+// Group repeated votes on the same point (tie-break rounds) into one entry
+// Keeps the LAST vote's result; adds .rondas count if > 1
+function groupRepeatedVotes(votaciones) {
+  // Work on a copy sorted by date ASC + sesion + numVotacion (to find consecutive)
+  const asc = [...votaciones].sort((a, b) => {
+    const dt = parseFechaSort(a.fecha) - parseFechaSort(b.fecha);
+    if (dt !== 0) return dt;
+    if (a.sesionNum !== b.sesionNum) return (a.sesionNum ?? 0) - (b.sesionNum ?? 0);
+    return (a.numVotacion ?? 0) - (b.numVotacion ?? 0);
+  });
+
+  function parseFechaSort(f) {
+    if (!f) return 0;
+    const MONTHS2 = {Ene:0,Feb:1,Mar:2,Abr:3,May:4,Jun:5,Jul:6,Ago:7,Sep:8,Oct:9,Nov:10,Dic:11};
+    const [d, m, y] = f.split(' ');
+    return new Date(+y, MONTHS2[m] ?? 0, +d).getTime();
+  }
+
+  const merged = [];
+  for (const v of asc) {
+    const prev = merged[merged.length - 1];
+    if (prev && prev.groupKey && v.groupKey && prev.groupKey === v.groupKey) {
+      // Same subject, same session — this is a retry round
+      // Keep this (later) vote's result, increment round count
+      prev.rondas = (prev.rondas || 1) + 1;
+      prev.aprobada   = v.aprobada;
+      prev.votos      = v.votos;
+      prev.votRef     = v.votRef;
+      prev.numVotacion = v.numVotacion;
+    } else {
+      merged.push({ ...v, rondas: 1 });
+    }
+  }
+
+  // Re-sort DESC for display
+  return merged.sort((a, b) => parseFechaSort(b.fecha) - parseFechaSort(a.fecha));
+}
+
+function inferTipo(asunto) {
+  const a = (asunto || '').toLowerCase();
+  if (a.includes('proyecto de ley'))       return 'Proyecto de ley';
+  if (a.includes('proposición de ley orgánica') || a.includes('proposicion de ley organica')) return 'Proposición de ley orgánica';
+  if (a.includes('proposición de ley') || a.includes('proposicion de ley'))    return 'Proposición de ley';
+  if (a.includes('real decreto-ley') || a.includes('decreto-ley') || a.includes('convalidación')) return 'Convalidación decreto';
+  if (a.includes('investidura'))           return 'Investidura';
+  if (a.includes('moción de censura'))     return 'Moción de censura';
+  if (a.includes('proposición no de ley')) return 'Proposición no de ley';
+  if (a.includes('moción'))                return 'Moción';
+  if (a.includes('presupuesto'))           return 'Presupuestos';
+  if (a.includes('enmienda'))              return 'Enmienda';
+  return 'Votación';
+}
+
+function formatFechaES(str) {
+  if (!str) return '';
+  // Handles D/M/YYYY or DD/MM/YYYY
+  const m = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (!m) return str;
+  const months = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return `${parseInt(m[1])} ${months[parseInt(m[2])]} ${m[3]}`;
+}
+
+function truncate(str, n) {
+  return str && str.length > n ? str.slice(0, n) + '…' : str;
+}
+
+function showImportStatus(msg, type) {
+  const el = document.getElementById('import-status');
+  el.innerHTML = `<span class="import-${type}">${msg}</span>`;
+  if (type === 'ok') setTimeout(() => el.innerHTML = '', 4000);
+}
+
+function updateVotCount() {
+  const total = VOTACIONES.length + importedVotaciones.length;
+  const el = document.getElementById('vot-count');
+  if (el) el.textContent = `${total} votaciones`;
+}
+
+async function processJsonText(text, filename) {
+  const json = JSON.parse(text);
+  const items = Array.isArray(json) ? json : [json];
+  let loaded = 0;
+  const existingKeys = new Set(importedVotaciones.map(v => v.dedupKey).filter(Boolean));
+  for (const item of items) {
+    const v = parseCongresoJSON(item, filename);
+    if (v) {
+      if (v.dedupKey && existingKeys.has(v.dedupKey)) continue; // duplicate
+      existingKeys.add(v.dedupKey);
+      importedVotaciones.push(v);
+      loaded++;
+    }
+  }
+  return loaded;
+}
+
+async function handleFiles(files) {
+  let loaded = 0, skipped = 0;
+  showImportStatus('⏳ Procesando…', 'warn');
+
+  for (const file of files) {
+    if (file.name.endsWith('.zip')) {
+      try {
+        const zip = await JSZip.loadAsync(file);
+        const jsonFiles = Object.values(zip.files).filter(f => f.name.endsWith('.json') && !f.dir);
+        if (jsonFiles.length === 0) { skipped++; continue; }
+        for (const zf of jsonFiles) {
+          try {
+            const text = await zf.async('string');
+            const n = await processJsonText(text, zf.name);
+            loaded += n;
+            if (n === 0) skipped++;
+          } catch(e) { skipped++; }
+        }
+      } catch(e) { skipped++; }
+
+    } else if (file.name.endsWith('.json')) {
+      try {
+        const text = await file.text();
+        const n = await processJsonText(text, file.name);
+        loaded += n;
+        if (n === 0) skipped++;
+      } catch(e) { skipped++; }
+
+    } else {
+      skipped++;
+    }
+  }
+
+  // Sort by date descending (newest first) — fecha format: "D Mes YYYY"
+  const MONTHS = {Ene:0,Feb:1,Mar:2,Abr:3,May:4,Jun:5,Jul:6,Ago:7,Sep:8,Oct:9,Nov:10,Dic:11};
+  function parseFecha(f) {
+    if (!f) return 0;
+    const [d, m, y] = f.split(' ');
+    return new Date(+y, MONTHS[m] ?? 0, +d).getTime();
+  }
+  importedVotaciones.sort((a, b) => parseFecha(b.fecha) - parseFecha(a.fecha));
+  importedVotaciones = groupRepeatedVotes(importedVotaciones);
+  buildDiputadoIndex();
+  updateLegislaturaSelector();
+  inferParties();
+  populateFilterOptions();
+  renderVotacionesList();
+  // Show hemiciclo content (hidden until first import)
+  document.getElementById('hemiciclo-placeholder').style.display = 'none';
+  document.getElementById('hemiciclo-content').style.display = 'block';
+  // Update subtitle with inferred composition info
+  const totalSeats = PARTIES.reduce((s,p) => s+p.seats, 0);
+  const legLabel = activeLegislatura ? activeLegislatura + ' Legislatura' : '';
+  document.getElementById('hemiciclo-subtitle').textContent =
+    `${totalSeats} diputados inferidos · ${legLabel}`;
+  renderHemiciclo(null);
+  renderMayoriaBar();
+  renderPartidos();
+  updateVotCount();
+  if (loaded > 0)
+    showImportStatus(`✓ ${loaded} votación(es) importada(s)${skipped ? ` · ${skipped} omitida(s)` : ''}`, 'ok');
+  else
+    showImportStatus(`⚠ No se pudo importar ningún archivo (${skipped} omitido(s))`, 'warn');
+}
+
+// Wire up file input
+document.getElementById('json-file-input').addEventListener('change', e => {
+  handleFiles(Array.from(e.target.files));
+  e.target.value = '';
+});
+
+// Drag and drop
+const importBar = document.getElementById('import-bar');
+importBar.addEventListener('dragover',  e => { e.preventDefault(); importBar.classList.add('drag-over'); });
+importBar.addEventListener('dragleave', e => { importBar.classList.remove('drag-over'); });
+importBar.addEventListener('drop', e => {
+  e.preventDefault();
+  importBar.classList.remove('drag-over');
+  handleFiles(Array.from(e.dataTransfer.files));
+});
+
+// ─────────────────────────────────────────────
+// DIPUTADOS SECTION
+// ─────────────────────────────────────────────
+let dipSectionFilter = null; // active party filter
+
+function renderDiputadosSection() {
+  const hasData = Object.keys(diputadoIndex).length > 0;
+  document.getElementById('dip-section-placeholder').style.display = hasData ? 'none' : 'flex';
+  document.getElementById('dip-section-content').style.display   = hasData ? 'block' : 'none';
+  if (!hasData) return;
+  dipSectionFilter = null;
+  renderDipPartyFilters();
+  renderDipList();
+}
+
+function renderDipPartyFilters() {
+  const container = document.getElementById('dip-section-filters');
+  const partyCounts = {};
+  for (const d of Object.values(diputadoIndex)) {
+    partyCounts[d.pid] = (partyCounts[d.pid] || 0) + 1;
+  }
+  const chips = ORDERED_PARTIES
+    .filter(pid => partyCounts[pid])
+    .map(pid => {
+      const p = PARTIES.find(x => x.id === pid);
+      if (!p) return '';
+      return `<button class="dip-party-chip" data-pid="${pid}"
+        style="border-bottom: 2px solid ${p.color}"
+        onclick="setDipFilter('${pid}')">${p.name} <span style="opacity:0.6">${partyCounts[pid]}</span></button>`;
+    }).join('');
+  container.innerHTML =
+    `<button class="dip-party-chip active" style="border-bottom:2px solid var(--gold)" onclick="setDipFilter(null)">Todos</button>${chips}`;
+}
+
+function setDipFilter(pid) {
+  dipSectionFilter = pid;
+  document.querySelectorAll('.dip-party-chip').forEach(c => {
+    c.classList.toggle('active', (c.dataset.pid || null) === pid);
+    if (c.classList.contains('active')) {
+      const p = pid ? PARTIES.find(x => x.id === pid) : null;
+      c.style.background = p ? p.color + '33' : 'rgba(192,155,90,0.15)';
+    } else {
+      c.style.background = '';
+    }
+  });
+  renderDipList();
+}
+
+function filterDiputadosList() {
+  renderDipList();
+}
+
+function renderDipList() {
+  const query  = (document.getElementById('dip-section-search')?.value || '').toLowerCase();
+  const container = document.getElementById('dip-section-list');
+
+  let entries = Object.values(diputadoIndex);
+  if (dipSectionFilter) entries = entries.filter(d => d.pid === dipSectionFilter);
+  if (query) entries = entries.filter(d => d.nombre.toLowerCase().includes(query));
+  entries.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+
+  if (!entries.length) {
+    container.innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--muted);font-family:monospace;font-size:0.72rem">Sin resultados</div>';
+    return;
+  }
+
+  container.innerHTML = entries.map(d => {
+    const p = PARTIES.find(x => x.id === d.pid);
+    const color = p?.color || '#607080';
+    const af = d.vots.filter(v => v.voto === 'af').length;
+    const ec = d.vots.filter(v => v.voto === 'ec').length;
+    return `<div class="dip-list-row" data-nombre="${d.nombre}" onclick="showDiputadoProfile('${d.nombre.replace(/'/g,"\'")}')">
+      <div class="dip-list-dot" style="background:${color}"></div>
+      <div class="dip-list-nombre">${d.nombre}</div>
+      <div class="dip-list-count" style="color:#4caf80">${af}✓</div>
+      <div class="dip-list-count" style="color:#e05050;margin-left:4px">${ec}✗</div>
+    </div>`;
+  }).join('');
+}
+
+function showDiputadoProfile(nombre) {
+  const dip = diputadoIndex[nombre];
+  if (!dip) return;
+
+  // Highlight active row
+  document.querySelectorAll('.dip-list-row').forEach(r => {
+    r.classList.toggle('active', r.dataset.nombre === nombre);
+  });
+
+  const party = PARTIES.find(p => p.id === dip.pid) || { name: dip.grupo, full: dip.grupo, color: '#607080' };
+  const vots  = dip.vots;
+  const af  = vots.filter(v => v.voto === 'af').length;
+  const ec  = vots.filter(v => v.voto === 'ec').length;
+  const ab  = vots.filter(v => v.voto === 'ab').length;
+  const nv  = vots.filter(v => v.voto === 'nv').length;
+
+  const VOTO_ICON  = { af: '✓', ec: '✗', ab: '~', nv: '—' };
+  const VOTO_COLOR = { af: '#4caf80', ec: '#e05050', ab: '#c0a030', nv: '#555' };
+  const VOTO_LABEL = { af: 'A favor', ec: 'En contra', ab: 'Abstención', nv: 'No votó' };
+
+  const sorted = [...vots].sort((a, b) => {
+    const MONTHS = {Ene:0,Feb:1,Mar:2,Abr:3,May:4,Jun:5,Jul:6,Ago:7,Sep:8,Oct:9,Nov:10,Dic:11};
+    const parse = f => { if (!f) return 0; const [d,m,y] = f.split(' '); return new Date(+y,MONTHS[m]??0,+d).getTime(); };
+    return parse(b.fecha) - parse(a.fecha);
+  });
+
+  const rows = sorted.map(v => `
+    <div class="dip-vot-row" style="cursor:pointer" title="Ver votación" onclick="navigateToVotacion(${v.id})">
+      <div class="dip-vot-icon" style="color:${VOTO_COLOR[v.voto]}">${VOTO_ICON[v.voto]}</div>
+      <div style="flex:1;min-width:0">
+        <div class="dip-vot-titulo">${truncate(v.titulo, 90)}</div>
+        <div class="dip-vot-fecha">${v.fecha}${v.tipo ? ' · ' + v.tipo : ''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0">
+        <div class="dip-vot-fecha" style="color:${VOTO_COLOR[v.voto]};font-weight:600">${VOTO_LABEL[v.voto]}</div>
+        <div style="color:var(--muted);font-size:0.7rem">→</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('dip-section-profile').innerHTML = `
+    <div class="dip-header">
+      <div class="dip-avatar" style="background:${party.color}22;border:2px solid ${party.color}">
+        <span style="color:${party.color}">👤</span>
+      </div>
+      <div>
+        <div class="dip-nombre">${dip.nombre}</div>
+        <div class="dip-partido" style="color:${party.color}">${party.name} · ${party.full}</div>
+      </div>
+    </div>
+    <div class="dip-stats">
+      <div class="dip-stat"><div class="dip-stat-value">${vots.length}</div><div class="dip-stat-label">Votaciones</div></div>
+      <div class="dip-stat"><div class="dip-stat-value" style="color:#4caf80">${af}</div><div class="dip-stat-label">A favor</div></div>
+      <div class="dip-stat"><div class="dip-stat-value" style="color:#e05050">${ec}</div><div class="dip-stat-label">En contra</div></div>
+      <div class="dip-stat"><div class="dip-stat-value" style="color:#c0a030">${ab+nv}</div><div class="dip-stat-label">Abs/Aus</div></div>
+    </div>
+    <div class="dip-vots-list">${rows}</div>
+  `;
+
+  // On mobile, scroll profile into view
+  if (window.innerWidth <= 700) {
+    document.getElementById('dip-section-profile').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// Also call renderDiputadosSection when buildDiputadoIndex finishes (if section is visible)
+const _origBuild = buildDiputadoIndex;
+buildDiputadoIndex = function() {
+  _origBuild();
+  if (document.getElementById('diputados')?.classList.contains('active')) {
+    renderDiputadosSection();
+  }
+};
+
+// ─────────────────────────────────────────────
+// DIPUTADO MODAL
+// ─────────────────────────────────────────────
+function showDiputadoModal(dip) {
+  const party = PARTIES.find(p => p.id === dip.pid) || { name: dip.grupo, full: dip.grupo, color: '#607080' };
+  const vots  = dip.vots;
+
+  const af = vots.filter(v => v.voto === 'af').length;
+  const ec = vots.filter(v => v.voto === 'ec').length;
+  const ab = vots.filter(v => v.voto === 'ab').length;
+  const nv = vots.filter(v => v.voto === 'nv').length;
+  const total = vots.length;
+
+  const VOTO_ICON = { af: '✓', ec: '✗', ab: '~', nv: '—' };
+  const VOTO_COLOR = { af: '#4caf80', ec: '#e05050', ab: '#c0a030', nv: '#555' };
+  const VOTO_LABEL = { af: 'A favor', ec: 'En contra', ab: 'Abstención', nv: 'No votó' };
+
+  function renderList(filter = '') {
+    const filtered = filter
+      ? vots.filter(v => v.titulo.toLowerCase().includes(filter.toLowerCase()))
+      : vots;
+    const sorted = [...filtered].sort((a, b) => {
+      const MONTHS = {Ene:0,Feb:1,Mar:2,Abr:3,May:4,Jun:5,Jul:6,Ago:7,Sep:8,Oct:9,Nov:10,Dic:11};
+      const parse = f => { if (!f) return 0; const [d,m,y] = f.split(' '); return new Date(+y,MONTHS[m]??0,+d).getTime(); };
+      return parse(b.fecha) - parse(a.fecha);
+    });
+    return sorted.map(v => `
+      <div class="dip-vot-row" style="cursor:pointer" onclick="closeDiputadoModal();navigateToVotacion(${v.id})">
+        <div class="dip-vot-icon" style="color:${VOTO_COLOR[v.voto]}">${VOTO_ICON[v.voto]}</div>
+        <div style="flex:1;min-width:0">
+          <div class="dip-vot-titulo">${truncate(v.titulo, 100)}</div>
+          <div class="dip-vot-fecha">${v.fecha}${v.tipo ? ' · ' + v.tipo : ''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0">
+          <div class="dip-vot-fecha" style="color:${VOTO_COLOR[v.voto]};font-weight:600">${VOTO_LABEL[v.voto]}</div>
+          <div style="color:var(--muted);font-size:0.7rem">→</div>
+        </div>
+      </div>`).join('') || '<div style="padding:1.5rem;text-align:center;color:var(--muted);font-family:monospace;font-size:0.7rem">Sin resultados</div>';
+  }
+
+  document.getElementById('diputado-modal-content').innerHTML = `
+    <div class="dip-header">
+      <div class="dip-avatar" style="background:${party.color}22;border:2px solid ${party.color}">
+        <span style="color:${party.color}">👤</span>
+      </div>
+      <div>
+        <div class="dip-nombre">${dip.nombre}</div>
+        <div class="dip-partido" style="color:${party.color}">${party.name} · ${party.full}</div>
+      </div>
+      <button class="dip-close" onclick="closeDiputadoModal()">✕</button>
+    </div>
+    <div class="dip-stats">
+      <div class="dip-stat">
+        <div class="dip-stat-value">${total}</div>
+        <div class="dip-stat-label">Votaciones</div>
+      </div>
+      <div class="dip-stat">
+        <div class="dip-stat-value" style="color:#4caf80">${af}</div>
+        <div class="dip-stat-label">A favor</div>
+      </div>
+      <div class="dip-stat">
+        <div class="dip-stat-value" style="color:#e05050">${ec}</div>
+        <div class="dip-stat-label">En contra</div>
+      </div>
+      <div class="dip-stat">
+        <div class="dip-stat-value" style="color:#c0a030">${ab + nv}</div>
+        <div class="dip-stat-label">Abs/Ausente</div>
+      </div>
+    </div>
+    <input class="dip-search" id="dip-search" placeholder="🔍  Filtrar votaciones…" oninput="document.getElementById('dip-list').innerHTML=renderDipList(this.value)">
+    <div class="dip-vots-list" id="dip-list">${renderList()}</div>
+  `;
+
+  // Store renderList in closure accessible from inline oninput
+  window.renderDipList = renderList;
+
+  document.getElementById('diputado-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDiputadoModal(e) {
+  if (e && e.target !== document.getElementById('diputado-modal')) return;
+  document.getElementById('diputado-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// ─────────────────────────────────────────────
+// LOAD FROM REPO
+// ─────────────────────────────────────────────
+async function loadFromRepo() {
+  if (!REPO_RAW_BASE) return;
+  const btn = document.getElementById('load-repo-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Cargando índice…';
+
+  try {
+    const indexUrl = `${REPO_RAW_BASE}/votaciones/index.json`;
+    const res = await fetch(indexUrl);
+    if (!res.ok) throw new Error(`No se pudo cargar el índice (${res.status})`);
+    const index = await res.json(); // { XV: ['file1.zip', ...], XIV: [...] }
+
+    const allZips = [];
+    for (const [leg, files] of Object.entries(index)) {
+      for (const file of files) {
+        allZips.push({ leg, file, url: `${REPO_RAW_BASE}/votaciones/${leg}/${file}` });
+      }
+    }
+
+    const total = allZips.length;
+    let done = 0;
+    const blobs = [];
+
+    // Fetch ZIPs in parallel batches of 6
+    const BATCH = 6;
+    for (let i = 0; i < allZips.length; i += BATCH) {
+      const batch = allZips.slice(i, i + BATCH);
+      const results = await Promise.allSettled(
+        batch.map(async ({ url, file }) => {
+          const r = await fetch(url);
+          if (!r.ok) throw new Error(`${file}: HTTP ${r.status}`);
+          const buf = await r.arrayBuffer();
+          return new File([buf], file, { type: 'application/zip' });
+        })
+      );
+      for (const r of results) {
+        done++;
+        btn.textContent = `⏳ ${done}/${total} ZIPs…`;
+        if (r.status === 'fulfilled') blobs.push(r.value);
+        else console.warn(r.reason);
+      }
+    }
+
+    btn.textContent = '⏳ Procesando…';
+    await handleFiles(blobs);
+    btn.textContent = '✓ Cargado del repositorio';
+    btn.disabled = false;
+  } catch (e) {
+    showImportStatus(`⚠ Error cargando del repo: ${e.message}`, 'warn');
+    btn.textContent = '⬇ Cargar del repositorio';
+    btn.disabled = false;
+  }
+}
+
+// ─────────────────────────────────────────────
+// INIT — no default data, wait for ZIP import
+// ─────────────────────────────────────────────
+if (REPO_RAW_BASE) {
+  document.getElementById('load-repo-btn').style.display = 'inline-flex';
+}
+renderVotacionesList();
+updateVotCount();
+
+  </script>
+
+<!-- ── DIPUTADO MODAL ── -->
+<div id="diputado-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.7);backdrop-filter:blur(3px);overflow-y:auto;" onclick="closeDiputadoModal(event)">
+  <div id="diputado-modal-inner" style="margin:4vh auto;max-width:600px;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+    <div id="diputado-modal-content"></div>
+  </div>
+</div>
+
+</body>
+</html>

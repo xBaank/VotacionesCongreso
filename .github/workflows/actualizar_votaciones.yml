@@ -40,6 +40,9 @@ jobs:
         env:
           PYTHONUNBUFFERED: '1'
 
+      - name: Generar índice de ZIPs
+        run: python generar_indice.py
+
       - name: Comprobar si hay cambios
         id: cambios
         run: |
