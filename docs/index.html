@@ -1382,10 +1382,6 @@
         Importar ZIPs
         <input type="file" id="json-file-input" accept=".zip,.json" multiple style="display:none">
       </label>
-      <button class="import-btn" id="load-repo-btn" onclick="loadFromRepo()"
-        style="display:none;background:#1e3a52;border-color:#4a9eca;">
-        ⬇ Cargar del repositorio
-      </button>
       <div class="import-drop-overlay" id="import-drop-overlay">Suelta los ZIPs aquí</div>
     </div>
     <div id="import-status"></div>
@@ -1538,10 +1534,6 @@
 // ── Master lookup: grupo code → display metadata ──────────
 // Used to infer PARTIES dynamically from imported ZIPs.
 // Covers all modern legislatures. Unknown codes get a grey fallback.
-// ── REPO CONFIG ───────────────────────────────────────────
-// Set to your GitHub raw base URL to enable "Load from repo"
-const REPO_RAW_BASE = 'https://raw.githubusercontent.com/xBaank/VotacionesCongreso/main';
-
 const GRUPO_META = {
   // XV (2023-): códigos activos
   'GP':            { id: 'pp',          name: 'PP',        full: 'Partido Popular',                          color: '#1e77c2', side: 'derecha',    order: 8 },
@@ -3055,65 +3047,56 @@ function closeDiputadoModal(e) {
 // LOAD FROM REPO
 // ─────────────────────────────────────────────
 async function loadFromRepo() {
-  if (!REPO_RAW_BASE) return;
-  const btn = document.getElementById('load-repo-btn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Cargando índice…';
-
+  // Fetch datos/index.json to discover which legislature files exist
+  let legFiles;
   try {
-    const indexUrl = `${REPO_RAW_BASE}/votaciones/index.json`;
-    const res = await fetch(indexUrl);
-    if (!res.ok) throw new Error(`No se pudo cargar el índice (${res.status})`);
-    const index = await res.json(); // { XV: ['file1.zip', ...], XIV: [...] }
-
-    const allZips = [];
-    for (const [leg, files] of Object.entries(index)) {
-      for (const file of files) {
-        allZips.push({ leg, file, url: `${REPO_RAW_BASE}/votaciones/${leg}/${file}` });
-      }
-    }
-
-    const total = allZips.length;
-    let done = 0;
-    const blobs = [];
-
-    // Fetch ZIPs in parallel batches of 6
-    const BATCH = 6;
-    for (let i = 0; i < allZips.length; i += BATCH) {
-      const batch = allZips.slice(i, i + BATCH);
-      const results = await Promise.allSettled(
-        batch.map(async ({ url, file }) => {
-          const r = await fetch(url);
-          if (!r.ok) throw new Error(`${file}: HTTP ${r.status}`);
-          const buf = await r.arrayBuffer();
-          return new File([buf], file, { type: 'application/zip' });
-        })
-      );
-      for (const r of results) {
-        done++;
-        btn.textContent = `⏳ ${done}/${total} ZIPs…`;
-        if (r.status === 'fulfilled') blobs.push(r.value);
-        else console.warn(r.reason);
-      }
-    }
-
-    btn.textContent = '⏳ Procesando…';
-    await handleFiles(blobs);
-    btn.textContent = '✓ Cargado del repositorio';
-    btn.disabled = false;
+    const res = await fetch('./datos/index.json');
+    if (!res.ok) throw new Error(`${res.status}`);
+    legFiles = await res.json(); // ['XV', 'XIV', ...]
   } catch (e) {
-    showImportStatus(`⚠ Error cargando del repo: ${e.message}`, 'warn');
-    btn.textContent = '⬇ Cargar del repositorio';
-    btn.disabled = false;
+    console.info('Sin datos/index.json — modo importación manual.', e.message);
+    return; // running locally without a server, show manual import UI
   }
+
+  const total = legFiles.length;
+  showImportStatus(`⏳ Cargando datos (0/${total} legislaturas)…`, 'info');
+
+  const existingKeys = new Set(importedVotaciones.map(v => v.dedupKey).filter(Boolean));
+  let done = 0;
+
+  // Load legislatures in parallel
+  await Promise.all(legFiles.map(async (leg) => {
+    try {
+      const r = await fetch(`./datos/${leg}.json`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const votaciones = await r.json(); // pre-processed array
+      for (const v of votaciones) {
+        if (!v.dedupKey || existingKeys.has(v.dedupKey)) continue;
+        existingKeys.add(v.dedupKey);
+        importedVotaciones.push(v);
+      }
+    } catch(e) {
+      console.warn(`Error cargando datos/${leg}.json:`, e.message);
+    } finally {
+      done++;
+      showImportStatus(`⏳ Cargando datos (${done}/${total} legislaturas)…`, 'info');
+    }
+  }));
+
+  showImportStatus(`✓ ${importedVotaciones.length} votaciones cargadas`, 'ok');
+  inferParties();
+  renderHemiciclo();
+  buildDiputadoIndex();
+  renderVotacionesList();
+  renderEstadisticas();
+  renderDiputadosSection();
+  updateVotCount();
 }
 
 // ─────────────────────────────────────────────
 // INIT — no default data, wait for ZIP import
 // ─────────────────────────────────────────────
-if (REPO_RAW_BASE) {
-  document.getElementById('load-repo-btn').style.display = 'inline-flex';
-}
+loadFromRepo();
 renderVotacionesList();
 updateVotCount();
 

@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       legislaturas:
-        description: 'Legislaturas a descargar (ej: XV  o  XIV XV). Vacío = solo XV'
+        description: 'Legislaturas a descargar (ej: XV  o  XIV XV). Vacío = todas'
         required: false
         default: 'XV'
 
@@ -40,18 +40,22 @@ jobs:
         env:
           PYTHONUNBUFFERED: '1'
 
-      - name: Generar índice de ZIPs
-        run: python generar_indice.py
+      - name: Construir datos pre-procesados
+        run: |
+          LEGS="${{ github.event.inputs.legislaturas || 'X XI XII XIII XIV XV' }}"
+          python construir_datos.py $LEGS
+        env:
+          PYTHONUNBUFFERED: '1'
 
       - name: Comprobar si hay cambios
         id: cambios
         run: |
-          git add votaciones/
+          git add votaciones/ datos/
           if git diff --cached --quiet; then
             echo "hay_cambios=false" >> $GITHUB_OUTPUT
           else
             echo "hay_cambios=true" >> $GITHUB_OUTPUT
-            NUEVOS=$(git diff --cached --name-only | wc -l)
+            NUEVOS=$(git diff --cached --name-only | grep "^votaciones/" | wc -l)
             echo "nuevos=$NUEVOS" >> $GITHUB_OUTPUT
           fi
 
@@ -61,7 +65,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           FECHA=$(date '+%Y-%m-%d')
-          git commit -m "votaciones: ${{ steps.cambios.outputs.nuevos }} ZIPs nuevos ($FECHA)"
+          git commit -m "datos: ${{ steps.cambios.outputs.nuevos }} ZIPs nuevos ($FECHA)"
           git push
 
       - name: Sin cambios
