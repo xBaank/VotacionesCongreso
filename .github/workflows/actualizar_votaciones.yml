@@ -1,0 +1,64 @@
+name: Actualizar votaciones
+
+on:
+  schedule:
+    # 22:00 UTC = 23:00 España (invierno) / 00:00 (verano)
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+    inputs:
+      legislaturas:
+        description: 'Legislaturas a descargar (ej: XV  o  XIV XV). Vacío = solo XV'
+        required: false
+        default: 'X XI XII XIII XIV XV'
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Instalar dependencias
+        run: pip install requests beautifulsoup4
+
+      - name: Descargar ZIPs nuevos
+        run: |
+          LEGS="${{ github.event.inputs.legislaturas || 'X XI XII XIII XIV XV' }}"
+          python descargar_votaciones.py --leg $LEGS
+        env:
+          PYTHONUNBUFFERED: '1'
+
+      - name: Comprobar si hay cambios
+        id: cambios
+        run: |
+          git add votaciones/
+          if git diff --cached --quiet; then
+            echo "hay_cambios=false" >> $GITHUB_OUTPUT
+          else
+            echo "hay_cambios=true" >> $GITHUB_OUTPUT
+            NUEVOS=$(git diff --cached --name-only | wc -l)
+            echo "nuevos=$NUEVOS" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit y push
+        if: steps.cambios.outputs.hay_cambios == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          FECHA=$(date '+%Y-%m-%d')
+          git commit -m "votaciones: ${{ steps.cambios.outputs.nuevos }} ZIPs nuevos ($FECHA)"
+          git push
+
+      - name: Sin cambios
+        if: steps.cambios.outputs.hay_cambios == 'false'
+        run: echo "✓ No hay votaciones nuevas hoy."
