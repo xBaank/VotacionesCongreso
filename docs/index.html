@@ -3083,9 +3083,24 @@ async function loadFromRepo() {
     }
   }));
 
+  // Sort and deduplicate, same as handleFiles does
+  importedVotaciones.sort((a, b) => parseFecha(b.fecha) - parseFecha(a.fecha));
+  importedVotaciones = groupRepeatedVotes(importedVotaciones);
+
   showImportStatus(`✓ ${importedVotaciones.length} votaciones cargadas`, 'ok');
+  updateLegislaturaSelector();
+  populateFilterOptions();
+  // Show hemiciclo content
+  document.getElementById('hemiciclo-placeholder').style.display = 'none';
+  document.getElementById('hemiciclo-content').style.display = 'block';
   inferParties();
-  renderHemiciclo();
+  const totalSeats = PARTIES.reduce((s,p) => s+p.seats, 0);
+  const legLabel = activeLegislatura ? activeLegislatura + ' Legislatura' : '';
+  document.getElementById('hemiciclo-subtitle').textContent =
+    `${totalSeats} diputados inferidos · ${legLabel}`;
+  renderHemiciclo(null);
+  renderMayoriaBar();
+  renderPartidos();
   buildDiputadoIndex();
   renderVotacionesList();
   renderDashboard();
