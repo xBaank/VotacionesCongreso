@@ -1620,6 +1620,8 @@ const GRUPO_META = {
   // XII (2016-2019)
   'GDL':           { id: 'pdecat',      name: 'PDECat',    full: 'PDECat / Democràcia i Llibertat',          color: '#003da5', side: 'derecha',    order: 7 },
   'GC-D':          { id: 'pdecat',      name: 'PDECat',    full: 'PDECat / Democràcia i Llibertat',          color: '#003da5', side: 'derecha',    order: 7 },
+  'GCUP-EC-EM':    { id: 'podemos',     name: 'PODEMOS',   full: 'Unidos Podemos / En Comú Podem / En Marea', color: '#7b2d8b', side: 'izquierda',  order: 1 },
+  'GER':           { id: 'erc',         name: 'ERC',       full: 'Esquerra Republicana de Catalunya',         color: '#f5b222', side: 'izquierda',  order: 2 },
   // XI (ene-jul 2016) — mismos grupos que XII, legislatura fallida
   // X (2011-2016)
   'GIU':           { id: 'iu',          name: 'IU',        full: 'Izquierda Unida',                          color: '#c1272d', side: 'izquierda',  order: 1 },
@@ -1651,6 +1653,7 @@ const PARTIES_DEFAULT = [
 
 let PARTIES = [...PARTIES_DEFAULT];
 let ORDERED_PARTIES = PARTIES.sort((a,b) => a.order - b.order).map(p => p.id);
+let ESCANOS = {}; // official seat counts loaded from escanos.json
 
 // Rebuild PARTIES from imported votaciones for the active legislature
 function inferParties() {
@@ -1664,8 +1667,7 @@ function inferParties() {
     return;
   }
 
-  // Collect per-party seat counts across all votaciones, then use median
-  // (avoids inflation from substitutions at the max end)
+  // Collect party metadata and (as fallback) vote-based seat counts
   const pidMeta    = {};   // pid → meta
   const pidSamples = {};   // pid → [count per votacion]
 
@@ -1691,17 +1693,20 @@ function inferParties() {
     return;
   }
 
-  // Median helper
-  function median(arr) {
+  // Use official seat counts from escanos.json if available for this legislature,
+  // otherwise fall back to 90th-percentile of votes cast per party
+  const legKey = activeLegislatura || 'XV';
+  const oficialSeats = ESCANOS[legKey] || null;
+
+  function p90(arr) {
     const s = [...arr].sort((a, b) => a - b);
-    const m = Math.floor(s.length / 2);
-    return s.length % 2 ? s[m] : Math.round((s[m-1] + s[m]) / 2);
+    return s[Math.min(Math.floor(s.length * 0.90), s.length - 1)];
   }
 
   const rawParties = Object.entries(pidSamples).map(([pid, samples]) => ({
     ...pidMeta[pid],
     id:    pid,
-    seats: median(samples),
+    seats: oficialSeats ? (oficialSeats[pid] || 0) : p90(samples),
   }));
 
   // Normalize total to 350 proportionally
@@ -3115,6 +3120,12 @@ function closeDiputadoModal(e) {
 async function loadFromRepo() {
   const btn = document.getElementById('load-repo-btn');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Cargando…'; }
+
+  // Load official seat counts if available
+  try {
+    const r = await fetch('./escanos.json');
+    if (r.ok) ESCANOS = await r.json();
+  } catch(e) { /* optional file, ignore */ }
 
   // Fetch datos/index.json to discover which legislature files exist
   let legFiles;

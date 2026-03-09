@@ -33,6 +33,11 @@ jobs:
       - name: Instalar dependencias
         run: pip install requests beautifulsoup4
 
+      - name: Actualizar datos de diputados
+        run: python descargar_diputados.py
+        env:
+          PYTHONUNBUFFERED: '1'
+
       - name: Descargar ZIPs nuevos
         run: |
           LEGS="${{ github.event.inputs.legislaturas || 'X XI XII XIII XIV XV' }}"
@@ -50,7 +55,7 @@ jobs:
       - name: Comprobar si hay cambios
         id: cambios
         run: |
-          git add votaciones/ docs/
+          git add votaciones/ docs/ diputados/
           if git diff --cached --quiet; then
             echo "hay_cambios=false" >> $GITHUB_OUTPUT
           else
