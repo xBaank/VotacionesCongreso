@@ -150,9 +150,22 @@
     .nav-tab {
       flex: 1;
       height: 38px;
-      font-size: 0.68rem;
-      padding: 0.4rem 0.5rem;
+      font-size: 0.63rem;
+      letter-spacing: 0.02em;
+      padding: 0.4rem 0.25rem;
       text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .nav-tab {
+      font-size: 0.55rem;
+      letter-spacing: 0;
+      padding: 0.4rem 0.1rem;
     }
   }
 
@@ -164,7 +177,14 @@
   }
 
   /* ── DASHBOARD ── */
-  #estadisticas > *, #diputados > * { max-width: 1200px; margin-left: auto; margin-right: auto; }
+  #estadisticas,
+  #diputados {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+  #estadisticas > *, #diputados > * { max-width: 100%; }
   .dash-kpi-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -198,6 +218,12 @@
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
     margin-bottom: 1.5rem;
+  }
+  .dash-two-col > * {
+    min-width: 0;
+  }
+  .dash-kpi-row > * {
+    min-width: 0;
   }
   .dash-card {
     background: var(--surface);
@@ -328,14 +354,19 @@
     text-align: center;
   }
   @media (max-width: 700px) {
+    #estadisticas,
+    #diputados {
+      padding: 1rem;
+    }
     .dash-kpi-row { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
     .dash-two-col { grid-template-columns: 1fr; gap: 1rem; }
     .dash-card { padding: 0.9rem 0.75rem; }
     .dbar-row { grid-template-columns: 1fr 38px; }
     .dbar-label { grid-column: 1 / -1; margin-bottom: -0.3rem; }
     .dbar-track { grid-column: 1; }
-    .align-table { font-size: 0.5rem; }
-    .align-table th, .align-table td { padding: 2px 3px; }
+    .align-matrix { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .align-table { font-size: 0.45rem; }
+    .align-table th, .align-table td { padding: 2px; }
     .dash-kpi-value { font-size: 1.5rem; }
   }
 
@@ -1304,6 +1335,14 @@
 
   .import-btn:hover { background: #a0802a; border-color: var(--gold); color: #fff; }
 
+  .import-btn-repo {
+    background: none;
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .import-btn-repo:hover { background: rgba(88,166,255,0.1); border-color: var(--accent); color: var(--accent); }
+  .import-btn-repo:disabled { opacity: 0.5; cursor: not-allowed; }
+
   #import-status {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.65rem;
@@ -1341,9 +1380,29 @@
     letter-spacing: 0.05em;
   }
 
+  .import-btns {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
   @media (max-width: 600px) {
-    .import-bar { padding: 0.75rem; gap: 0.75rem; }
+    .import-bar {
+      padding: 0.75rem;
+      gap: 0.6rem;
+      flex-direction: column;
+    }
     .import-sub { display: none; }
+    .import-btns {
+      width: 100%;
+    }
+    .import-btn,
+    label.import-btn {
+      flex: 1;
+      text-align: center;
+      padding: 0.45rem 0.5rem;
+      font-size: 0.63rem;
+    }
   }
 
   </style>
@@ -1378,10 +1437,15 @@
           <div class="import-sub">Descarga los ZIPs de <a href="https://www.congreso.es/es/opendata/votaciones" target="_blank" style="color:var(--gold)">congreso.es/opendata/votaciones</a> y arrástralos aquí o selecciónalos</div>
         </div>
       </div>
-      <label class="import-btn">
-        Importar ZIPs
-        <input type="file" id="json-file-input" accept=".zip,.json" multiple style="display:none">
-      </label>
+      <div class="import-btns">
+        <button class="import-btn import-btn-repo" id="load-repo-btn" onclick="loadFromRepo()">
+          ☁ Cargar datos
+        </button>
+        <label class="import-btn">
+          Importar ZIPs
+          <input type="file" id="json-file-input" accept=".zip,.json" multiple style="display:none">
+        </label>
+      </div>
       <div class="import-drop-overlay" id="import-drop-overlay">Suelta los ZIPs aquí</div>
     </div>
     <div id="import-status"></div>
@@ -2742,7 +2806,8 @@ async function handleFiles(files) {
         if (jsonFiles.length === 0) { skipped++; continue; }
         for (const zf of jsonFiles) {
           try {
-            const text = await zf.async('string');
+            const raw = await zf.async('uint8array');
+            const text = new TextDecoder('utf-8').decode(raw);
             const n = await processJsonText(text, zf.name);
             loaded += n;
             if (n === 0) skipped++;
@@ -3048,6 +3113,9 @@ function closeDiputadoModal(e) {
 // LOAD FROM REPO
 // ─────────────────────────────────────────────
 async function loadFromRepo() {
+  const btn = document.getElementById('load-repo-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Cargando…'; }
+
   // Fetch datos/index.json to discover which legislature files exist
   let legFiles;
   try {
@@ -3056,6 +3124,8 @@ async function loadFromRepo() {
     legFiles = await res.json(); // ['XV', 'XIV', ...]
   } catch (e) {
     console.info('Sin datos/index.json — modo importación manual.', e.message);
+    if (btn) { btn.disabled = false; btn.textContent = '☁ Cargar datos'; }
+    showImportStatus('⚠ No se encontró index.json en el servidor', 'warn');
     return; // running locally without a server, show manual import UI
   }
 
@@ -3088,6 +3158,7 @@ async function loadFromRepo() {
   importedVotaciones.sort((a, b) => parseFecha(b.fecha) - parseFecha(a.fecha));
   importedVotaciones = groupRepeatedVotes(importedVotaciones);
 
+  if (btn) { btn.disabled = false; btn.textContent = '☁ Cargar datos'; }
   showImportStatus(`✓ ${importedVotaciones.length} votaciones cargadas`, 'ok');
   updateLegislaturaSelector();
   populateFilterOptions();
@@ -3110,9 +3181,8 @@ async function loadFromRepo() {
 }
 
 // ─────────────────────────────────────────────
-// INIT — no default data, wait for ZIP import
+// INIT — no default data, wait for user action
 // ─────────────────────────────────────────────
-loadFromRepo();
 renderVotacionesList();
 updateVotCount();
 

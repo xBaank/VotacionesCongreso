@@ -169,7 +169,7 @@ def build_legislatura(leg: str) -> int:
     existing = {}
     for chunk in sorted(DATOS_DIR.glob(f"{leg}_*.json")):
         try:
-            for v in json.loads(chunk.read_text()):
+            for v in json.loads(chunk.read_text(encoding='utf-8')):
                 existing[v['dedupKey']] = v
         except Exception:
             pass
@@ -211,7 +211,7 @@ def build_legislatura(leg: str) -> int:
     for chunk_key, vots in sorted(by_chunk.items()):
         vots.sort(key=lambda v: (v.get('sesionNum') or 0, v.get('numVotacion') or 0), reverse=True)
         chunk_path = DATOS_DIR / f"{leg}_{chunk_key}.json"
-        chunk_path.write_text(json.dumps(vots, ensure_ascii=False, separators=(',', ':')))
+        chunk_path.write_text(json.dumps(vots, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
         size_mb = chunk_path.stat().st_size / 1_000_000
         written_chunks.append(f"{leg}_{chunk_key}")
         print(f"    {chunk_path.name}: {len(vots)} votaciones ({size_mb:.1f} MB)")
@@ -230,7 +230,7 @@ def main():
         total += build_legislatura(leg)
     # Write docs/index.json listing all chunk files
     available = sorted(p.stem for p in DATOS_DIR.glob("*.json") if p.stem != 'index')
-    (DATOS_DIR / 'index.json').write_text(json.dumps(available, ensure_ascii=False))
+    (DATOS_DIR / 'index.json').write_text(json.dumps(available, ensure_ascii=False), encoding='utf-8')
     print(f"\nTotal nuevas votaciones: {total}")
     print(f"index.json → {available}")
 
