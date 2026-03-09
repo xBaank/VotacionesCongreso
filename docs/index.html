@@ -1415,10 +1415,9 @@
     <h1>Congreso de los Diputados</h1>
     <p>Reino de España · Cámara Baja</p>
   </div>
-  <div class="legislatura-badge">XV LEGISLATURA · v2</div>
   <nav class="nav-tabs">
-    <button class="nav-tab active" onclick="showSection('hemiciclo', this)">Hemiciclo</button>
-    <button class="nav-tab" onclick="showSection('votaciones', this)">Votaciones</button>
+    <button class="nav-tab active" onclick="showSection('hemiciclo', this)">Votaciones</button>
+    <button class="nav-tab" onclick="showSection('votaciones', this)" style="display:none">_</button>
     <button class="nav-tab" onclick="showSection('estadisticas', this); renderDashboard()">Estadísticas</button>
     <button class="nav-tab" onclick="showSection('diputados', this); renderDiputadosSection()">Diputados</button>
   </nav>
@@ -1458,68 +1457,48 @@
     </div>
 
     <div id="hemiciclo-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;text-align:center;gap:0.75rem;">
-      <span style="font-size:2.5rem;opacity:0.3">🏛</span>
-      Importa ZIPs de votaciones para ver<br>la composición real del hemiciclo
+      <span style="font-size:2.5rem;opacity:0.3">🗳</span>
+      Importa ZIPs de votaciones o pulsa<br>"Cargar datos" para empezar
     </div>
     <div id="hemiciclo-content" style="display:none">
-      <div class="hemiciclo-wrapper">
-        <div class="hemiciclo-card">
-          <div class="card-title">Distribución de Escaños</div>
-          <div class="card-subtitle" id="hemiciclo-subtitle"></div>
-          <svg id="hemiciclo-svg" viewBox="0 0 600 300"></svg>
-          <div class="voto-leyenda" style="justify-content:center; margin-top:1rem;">
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);">↑ Izquierda · Derecha ↑</span>
+      <div class="votaciones-layout">
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+            <div class="card-title">Proyectos y proposiciones</div>
+            <span id="vot-count" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);"></span>
+          </div>
+          <div class="filter-bar" id="filter-bar">
+            <input class="filter-search" id="filter-search" type="text" placeholder="🔍  Buscar por título…" oninput="applyFilters()">
+            <select class="filter-select" id="filter-tipo" onchange="applyFilters()">
+              <option value="">Todos los tipos</option>
+            </select>
+            <button class="filter-chip" id="chip-aprobada" onclick="toggleChip('aprobada')">✓ Aprobadas</button>
+            <button class="filter-chip" id="chip-rechazada" onclick="toggleChip('rechazada')">✗ Rechazadas</button>
+            <select class="filter-select" id="filter-partido" onchange="applyFilters()">
+              <option value="">Partido — todos</option>
+            </select>
+            <select class="filter-select" id="filter-voto-partido" onchange="applyFilters()" style="display:none">
+              <option value="">Cualquier voto</option>
+              <option value="af">Votó ✓ a favor</option>
+              <option value="ec">Votó ✗ en contra</option>
+              <option value="ab">Se abstuvo</option>
+            </select>
+            <button class="filter-clear" id="filter-clear-btn" onclick="clearFilters()" style="display:none">✕ Limpiar</button>
+          </div>
+          <div class="filter-results" id="filter-results"></div>
+          <div class="votacion-list" id="votacion-list"></div>
+        </div>
+        <div class="votacion-detail" id="votacion-detail">
+          <div style="display:flex;align-items:center;justify-content:center;height:300px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;text-align:center;">
+            ← Selecciona una votación<br>para ver el desglose
           </div>
         </div>
-        <div>
-          <div class="mayoria-bar" id="mayoria-bar"></div>
-          <div class="partidos-list" id="partidos-list"></div>
-        </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══════════ VOTACIONES ═══════════ -->
-  <section id="votaciones" class="section">
-
-    <div class="votaciones-layout">
-      <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-          <div class="card-title">Proyectos y proposiciones</div>
-          <span id="vot-count" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);"></span>
-        </div>
-
-        <!-- Filter bar -->
-        <div class="filter-bar" id="filter-bar">
-          <input class="filter-search" id="filter-search" type="text" placeholder="🔍  Buscar por título…" oninput="applyFilters()">
-          <select class="filter-select" id="filter-tipo" onchange="applyFilters()">
-            <option value="">Todos los tipos</option>
-          </select>
-          <button class="filter-chip" id="chip-aprobada" onclick="toggleChip('aprobada')">✓ Aprobadas</button>
-          <button class="filter-chip" id="chip-rechazada" onclick="toggleChip('rechazada')">✗ Rechazadas</button>
-          <select class="filter-select" id="filter-partido" onchange="applyFilters()">
-            <option value="">Partido — todos</option>
-          </select>
-          <select class="filter-select" id="filter-voto-partido" onchange="applyFilters()" style="display:none">
-            <option value="">Cualquier voto</option>
-            <option value="af">Votó ✓ a favor</option>
-            <option value="ec">Votó ✗ en contra</option>
-            <option value="ab">Se abstuvo</option>
-          </select>
-          <button class="filter-clear" id="filter-clear-btn" onclick="clearFilters()" style="display:none">✕ Limpiar</button>
-        </div>
-        <div class="filter-results" id="filter-results"></div>
-
-        <div class="votacion-list" id="votacion-list"></div>
-      </div>
-
-      <div class="votacion-detail" id="votacion-detail">
-        <div style="display:flex;align-items:center;justify-content:center;height:300px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;text-align:center;">
-          ← Selecciona una votación<br>para ver el desglose
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- ═══════════ VOTACIONES (unused, content moved to hemiciclo tab) ═══════════ -->
+  <section id="votaciones" class="section" style="display:none"></section>
 
 </main>
 
@@ -1586,7 +1565,7 @@
   </section>
 
 <footer>
-  Datos basados en la composición del Congreso a partir de las elecciones del 23 de julio de 2023 · Solo con fines informativos
+  Generado con Claude. Solo con fines informativos
 </footer>
 
 <div id="tooltip"></div>
@@ -1653,13 +1632,13 @@ const PARTIES_DEFAULT = [
 
 let PARTIES = [...PARTIES_DEFAULT];
 let ORDERED_PARTIES = PARTIES.sort((a,b) => a.order - b.order).map(p => p.id);
-let ESCANOS = {}; // official seat counts loaded from escanos.json
-
-// Rebuild PARTIES from imported votaciones for the active legislature
+// Rebuild PARTIES: tamaño de grupo = máximo de diputados vistos
+// en cualquier votación de la legislatura activa (evita ausencias).
 function inferParties() {
-  const vots = activeLegislatura
+  const vots = (activeLegislatura
     ? importedVotaciones.filter(v => v.legislatura === activeLegislatura)
-    : importedVotaciones;
+    : importedVotaciones
+  ).filter(v => v._rawGrupos && Object.keys(v._rawGrupos).length > 0);
 
   if (!vots.length) {
     PARTIES = [...PARTIES_DEFAULT];
@@ -1667,64 +1646,50 @@ function inferParties() {
     return;
   }
 
-  // Collect party metadata and (as fallback) vote-based seat counts
-  const pidMeta    = {};   // pid → meta
-  const pidSamples = {};   // pid → [count per votacion]
+  // Para cada pid, acumula el nombre del grupo y el máximo de diputados
+  // vistos en una sola votación (= tamaño real del grupo, sin ausencias)
+  const pidMeta   = {};   // pid → meta
+  const pidGroups = {};   // pid → { grupoName → Set de diputados }
 
   for (const v of vots) {
-    if (!v._rawGrupos) continue;
-    const countInV = {};
     for (const [grupo, diputados] of Object.entries(v._rawGrupos)) {
       const meta = GRUPO_META[grupo];
       const pid  = meta ? meta.id : 'otros';
       if (!pidMeta[pid])
-        pidMeta[pid] = meta || { id: 'otros', name: 'G. MIXTO', full: 'Grupo Mixto / Plural', color: '#607080', side: 'varios', order: 99 };
-      countInV[pid] = (countInV[pid] || 0) + diputados.length;
-    }
-    for (const [pid, count] of Object.entries(countInV)) {
-      if (!pidSamples[pid]) pidSamples[pid] = [];
-      pidSamples[pid].push(count);
+        pidMeta[pid] = meta || { id: pid, name: pid.toUpperCase(), full: grupo, color: '#607080', side: 'varios', order: 99 };
+      if (!pidGroups[pid]) pidGroups[pid] = {};
+      if (!pidGroups[pid][grupo]) pidGroups[pid][grupo] = new Set();
+      for (const d of diputados) pidGroups[pid][grupo].add(d);
     }
   }
 
-  if (!Object.keys(pidSamples).length) {
+  if (!Object.keys(pidGroups).length) {
     PARTIES = [...PARTIES_DEFAULT];
     ORDERED_PARTIES = [...PARTIES].sort((a,b) => a.order - b.order).map(p => p.id);
     return;
   }
 
-  // Use official seat counts from escanos.json if available for this legislature,
-  // otherwise fall back to 90th-percentile of votes cast per party
-  const legKey = activeLegislatura || 'XV';
-  const oficialSeats = ESCANOS[legKey] || null;
+  // Tamaño del grupo = total de diputados únicos vistos por pid
+  const rawParties = Object.entries(pidGroups).map(([pid, groups]) => {
+    const seats = Object.values(groups).reduce((s, set) => s + set.size, 0);
+    return { ...pidMeta[pid], id: pid, seats };
+  });
 
-  function p90(arr) {
-    const s = [...arr].sort((a, b) => a - b);
-    return s[Math.min(Math.floor(s.length * 0.90), s.length - 1)];
-  }
-
-  const rawParties = Object.entries(pidSamples).map(([pid, samples]) => ({
-    ...pidMeta[pid],
-    id:    pid,
-    seats: oficialSeats ? (oficialSeats[pid] || 0) : p90(samples),
-  }));
-
-  // Normalize total to 350 proportionally
+  // Normalizar a 350
   const rawTotal = rawParties.reduce((s, p) => s + p.seats, 0);
-  if (rawTotal !== 350 && rawTotal > 0) {
+  if (rawTotal > 0 && rawTotal !== 350) {
     let assigned = 0;
     rawParties.forEach((p, i) => {
       if (i < rawParties.length - 1) {
         p.seats = Math.round(p.seats / rawTotal * 350);
         assigned += p.seats;
       } else {
-        p.seats = 350 - assigned; // last party absorbs rounding remainder
+        p.seats = 350 - assigned;
       }
     });
   }
 
   PARTIES = rawParties.sort((a, b) => a.order - b.order);
-
   ORDERED_PARTIES = PARTIES.map(p => p.id);
 }
 
@@ -2095,18 +2060,10 @@ function selectLegislatura(leg) {
   inferParties();
   populateFilterOptions();
   renderVotacionesList();
-  // Show hemiciclo content (hidden until first import)
+  // Show content (hidden until first import)
   document.getElementById('hemiciclo-placeholder').style.display = 'none';
   document.getElementById('hemiciclo-content').style.display = 'block';
-  // Update subtitle with inferred composition info
-  const totalSeats = PARTIES.reduce((s,p) => s+p.seats, 0);
-  const legLabel = activeLegislatura ? activeLegislatura + ' Legislatura' : '';
-  document.getElementById('hemiciclo-subtitle').textContent =
-    `${totalSeats} diputados inferidos · ${legLabel}`;
-  renderHemiciclo(null);   // populates hemicicloSeats first
-  renderMayoriaBar();
-  renderPartidos();
-  buildDiputadoIndex();    // then assign diputados to seats
+  buildDiputadoIndex();
   renderDashboard();
 }
 
@@ -2844,14 +2801,6 @@ async function handleFiles(files) {
   // Show hemiciclo content (hidden until first import)
   document.getElementById('hemiciclo-placeholder').style.display = 'none';
   document.getElementById('hemiciclo-content').style.display = 'block';
-  // Update subtitle with inferred composition info
-  const totalSeats = PARTIES.reduce((s,p) => s+p.seats, 0);
-  const legLabel = activeLegislatura ? activeLegislatura + ' Legislatura' : '';
-  document.getElementById('hemiciclo-subtitle').textContent =
-    `${totalSeats} diputados inferidos · ${legLabel}`;
-  renderHemiciclo(null);
-  renderMayoriaBar();
-  renderPartidos();
   updateVotCount();
   if (loaded > 0)
     showImportStatus(`✓ ${loaded} votación(es) importada(s)${skipped ? ` · ${skipped} omitida(s)` : ''}`, 'ok');
@@ -3121,12 +3070,6 @@ async function loadFromRepo() {
   const btn = document.getElementById('load-repo-btn');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Cargando…'; }
 
-  // Load official seat counts if available
-  try {
-    const r = await fetch('./escanos.json');
-    if (r.ok) ESCANOS = await r.json();
-  } catch(e) { /* optional file, ignore */ }
-
   // Fetch datos/index.json to discover which legislature files exist
   let legFiles;
   try {
@@ -3177,13 +3120,6 @@ async function loadFromRepo() {
   document.getElementById('hemiciclo-placeholder').style.display = 'none';
   document.getElementById('hemiciclo-content').style.display = 'block';
   inferParties();
-  const totalSeats = PARTIES.reduce((s,p) => s+p.seats, 0);
-  const legLabel = activeLegislatura ? activeLegislatura + ' Legislatura' : '';
-  document.getElementById('hemiciclo-subtitle').textContent =
-    `${totalSeats} diputados inferidos · ${legLabel}`;
-  renderHemiciclo(null);
-  renderMayoriaBar();
-  renderPartidos();
   buildDiputadoIndex();
   renderVotacionesList();
   renderDashboard();
