@@ -164,13 +164,12 @@ def parse_votacion(data: dict, filename: str) -> dict | None:
 def build_legislatura(leg: str) -> int:
     src = VOTACIONES_DIR / leg
     DATOS_DIR.mkdir(exist_ok=True)
-    out_path = DATOS_DIR / f"{leg}.json"
 
-    # Load existing to avoid reprocessing
+    # Load existing across all year-chunks to avoid reprocessing
     existing = {}
-    if out_path.exists():
+    for chunk in sorted(DATOS_DIR.glob(f"{leg}_*.json")):
         try:
-            for v in json.loads(out_path.read_text()):
+            for v in json.loads(chunk.read_text()):
                 existing[v['dedupKey']] = v
         except Exception:
             pass
@@ -194,13 +193,30 @@ def build_legislatura(leg: str) -> int:
         except zipfile.BadZipFile as e:
             print(f"  ⚠ ZIP corrupto {zip_path.name}: {e}")
 
-    # Sort by date desc, then sesion desc
-    all_vots = sorted(existing.values(),
-        key=lambda v: (v.get('fecha', ''), v.get('sesionNum') or 0, v.get('numVotacion') or 0),
-        reverse=True)
+    # Group by year+month extracted from fecha ("D Mes YYYY")
+    MONTH_NUM = {m: f"{i:02d}" for i, m in enumerate(
+        ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'], 1)}
+    by_chunk: dict[str, list] = {}
+    for v in existing.values():
+        parts = (v.get('fecha') or '').split()
+        if len(parts) == 3:
+            _, mes, year = parts
+            key = f"{year}_{MONTH_NUM.get(mes, '00')}"
+        else:
+            key = 'unknown'
+        by_chunk.setdefault(key, []).append(v)
 
-    out_path.write_text(json.dumps(all_vots, ensure_ascii=False, separators=(',', ':')))
-    print(f"  {leg}: {nuevos} nuevas  →  {len(all_vots)} total  ({out_path})")
+    # Write one file per year-month, sorted date desc
+    written_chunks = []
+    for chunk_key, vots in sorted(by_chunk.items()):
+        vots.sort(key=lambda v: (v.get('sesionNum') or 0, v.get('numVotacion') or 0), reverse=True)
+        chunk_path = DATOS_DIR / f"{leg}_{chunk_key}.json"
+        chunk_path.write_text(json.dumps(vots, ensure_ascii=False, separators=(',', ':')))
+        size_mb = chunk_path.stat().st_size / 1_000_000
+        written_chunks.append(f"{leg}_{chunk_key}")
+        print(f"    {chunk_path.name}: {len(vots)} votaciones ({size_mb:.1f} MB)")
+
+    print(f"  {leg}: {nuevos} nuevas  →  {len(existing)} total  ({len(written_chunks)} chunks)")
     return nuevos
 
 # ── Main ───────────────────────────────────────────────────
@@ -212,11 +228,11 @@ def main():
             print(f"  ⚠ No existe votaciones/{leg}/")
             continue
         total += build_legislatura(leg)
-    # Write datos/index.json listing available legislature files
+    # Write docs/index.json listing all chunk files
     available = sorted(p.stem for p in DATOS_DIR.glob("*.json") if p.stem != 'index')
     (DATOS_DIR / 'index.json').write_text(json.dumps(available, ensure_ascii=False))
     print(f"\nTotal nuevas votaciones: {total}")
-    print(f"datos/index.json → {available}")
+    print(f"index.json → {available}")
 
 if __name__ == '__main__':
     main()
