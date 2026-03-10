@@ -50,7 +50,7 @@ jobs:
       - name: Comprobar si hay cambios
         id: cambios
         run: |
-          git add votaciones/ docs/ diputados/
+          git add votaciones/ docs/
           if git diff --cached --quiet; then
             echo "hay_cambios=false" >> $GITHUB_OUTPUT
           else
