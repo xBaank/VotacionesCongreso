@@ -35,14 +35,14 @@ jobs:
 
       - name: Descargar ZIPs nuevos
         run: |
-          LEGS="${{ github.event.inputs.legislaturas || 'X XI XII XIII XIV XV' }}"
+          LEGS="${{ github.event.inputs.legislaturas || 'XV' }}"
           python descargar_votaciones.py --leg $LEGS
         env:
           PYTHONUNBUFFERED: '1'
 
       - name: Construir datos pre-procesados
         run: |
-          LEGS="${{ github.event.inputs.legislaturas || 'X XI XII XIII XIV XV' }}"
+          LEGS="${{ github.event.inputs.legislaturas || 'XV' }}"
           python construir_datos.py $LEGS
         env:
           PYTHONUNBUFFERED: '1'
